@@ -1,0 +1,14 @@
+{
+  "pages": [
+    "pages/index/index"
+  ],
+  "window": {
+    "navigationBarTitleText": "滚珠魔方豆",
+    "navigationBarBackgroundColor": "#FCFAF5",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#F1ECE1",
+    "backgroundTextStyle": "light"
+  },
+  "style": "v2",
+  "sitemapLocation": "sitemap.json"
+}

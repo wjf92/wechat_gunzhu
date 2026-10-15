@@ -1,0 +1,69 @@
+<view class="page">
+
+  <view class="hud">
+    <view class="hud-item">
+      <text class="hud-num">{{steps}}</text>
+      <text class="hud-label">步数</text>
+    </view>
+    <view class="hud-item">
+      <text class="hud-num">{{timeText}}</text>
+      <text class="hud-label">用时</text>
+    </view>
+    <view class="hud-item">
+      <text class="hud-num">{{doneCount}}<text class="hud-small">/36</text></text>
+      <text class="hud-label">已归位</text>
+    </view>
+    <view class="win-pop {{won ? 'win-pop-show' : ''}}">
+      <view class="win-badge">✓</view>
+      <view class="win-title">复原成功</view>
+      <view class="win-sub">用时 {{timeText}}　·　{{steps}} 步</view>
+      <view class="win-btn" bindtap="onShuffle">再来一局</view>
+      <view class="win-link" bindtap="onReset">看看原始排列</view>
+    </view>
+  </view>
+
+  <view class="bar">
+    <view class="bar-fill" style="width:{{donePct}}%"></view>
+  </view>
+
+  <view class="board-wrap">
+    <canvas
+      type="2d"
+      id="board"
+      class="board"
+      bindtouchstart="onTouchStart"
+      bindtouchmove="onTouchMove"
+      bindtouchend="onTouchEnd"
+      bindtouchcancel="onTouchEnd"></canvas>
+  </view>
+
+  <view class="tip">{{tip}}</view>
+
+  <view class="levels">
+    <view
+      wx:for="{{levels}}"
+      wx:key="key"
+      class="chip {{level === item.key ? 'chip-on' : ''}}"
+      data-key="{{item.key}}"
+      bindtap="onLevel">{{item.label}}</view>
+  </view>
+
+  <view class="actions">
+    <view class="btn btn-primary" bindtap="onShuffle">一键打乱</view>
+    <view class="btn" bindtap="onUndo">撤销</view>
+    <view class="btn" bindtap="onReset">重来</view>
+  </view>
+
+  <view class="actions learn-row">
+    <view
+      class="btn learn-btn {{learn ? 'learn-on' : ''}}"
+      bindtap="onLearn">学习模式{{learn ? ' · 已开启' : ''}}</view>
+    <view
+      wx:if="{{learn}}"
+      class="btn btn-next {{learnDone ? 'btn-next-done' : ''}}"
+      bindtap="onLearnNext">{{learnDone ? '已完成 ✓' : (learnLeft === null ? '下一步' : '下一步（剩 ' + learnLeft + ' 步）')}}</view>
+  </view>
+
+  <view class="foot">3 圈 × 12 颗 = 36 颗珠 · 每次换圈只动 6 颗</view>
+
+</view>

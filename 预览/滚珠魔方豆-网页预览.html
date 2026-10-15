@@ -1,0 +1,1878 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>滚珠魔方豆 · 网页预览</title>
+<style>
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html, body { margin: 0; padding: 0; }
+body {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  background: linear-gradient(180deg, #FCFAF5 0%, #EFE9DD 100%);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  color: #3D3A34;
+  overflow: hidden;
+}
+.app {
+  width: 100%; max-width: 420px; height: 100vh;
+  max-height: 900px;
+  padding: 14px 16px 16px;
+  display: flex; flex-direction: column; align-items: center;
+}
+.hud {
+  width: 100%; display: flex; background: #fff; border-radius: 14px;
+  padding: 10px 0; box-shadow: 0 2px 10px rgba(120,110,90,.08);
+  position: relative;
+}
+.hud-item { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; }
+.hud-item + .hud-item::before {
+  content: ''; position: absolute; left: 0; top: 6px; bottom: 6px; width: 1px; background: #EFEBE2;
+}
+.hud-num { font-size: 21px; font-weight: 600; color: #2F2C27; font-variant-numeric: tabular-nums; }
+.hud-num small { font-size: 12px; color: #A9A294; font-weight: 500; }
+.hud-label { margin-top: 1px; font-size: 11px; color: #A9A294; }
+.bar { width: 100%; height: 4px; margin: 10px 0 4px; border-radius: 4px; background: #E9E3D8; overflow: hidden; }
+.bar-fill { height: 100%; width: 100%; border-radius: 4px; background: linear-gradient(90deg,#F0B429,#34A06A); transition: width .22s ease-out; }
+.board-wrap { width: 100%; flex: 1; display: flex; align-items: center; justify-content: center; min-height: 0; padding: 4px 0; position: relative; }
+canvas { display: block; touch-action: none; cursor: grab; }
+canvas.dragging { cursor: grabbing; }
+.tip { font-size: 12px; line-height: 17px; color: #A29B8D; text-align: center; padding: 0 10px; }
+.levels { display: flex; gap: 8px; margin-top: 10px; }
+.chip {
+  padding: 5px 17px; border-radius: 999px; font-size: 13px; color: #8C8578;
+  background: #fff; border: 1px solid #E7E1D6; cursor: pointer; user-select: none;
+}
+.chip.on { color: #fff; background: #3D6FD6; border-color: #3D6FD6; font-weight: 500; }
+.actions { width: 100%; display: flex; gap: 10px; margin-top: 11px; }
+.learn-row { margin-top: 8px; }
+.learn-btn.on {
+  color: #fff; font-weight: 500;
+  background: linear-gradient(135deg,#3FB98A,#2E9B69);
+  box-shadow: 0 4px 12px rgba(46,155,105,.26);
+}
+.btn.next {
+  flex: 1.5; color: #fff; font-weight: 500;
+  background: linear-gradient(135deg,#4A82E8,#3563C8);
+  box-shadow: 0 4px 12px rgba(60,105,200,.3);
+}
+.btn.next.done {
+  background: linear-gradient(135deg,#8FB8EF,#6C9BE0); box-shadow: none;
+}
+.btn {
+  flex: 1; height: 46px; line-height: 46px; text-align: center; border-radius: 10px;
+  font-size: 15px; color: #4A4640; background: #fff; cursor: pointer; user-select: none;
+  box-shadow: 0 2px 8px rgba(120,110,90,.09);
+}
+.btn:active { opacity: .72; }
+.btn.primary {
+  flex: 1.5; color: #fff; font-weight: 500;
+  background: linear-gradient(135deg,#4A82E8,#3563C8);
+  box-shadow: 0 4px 12px rgba(60,105,200,.3);
+}
+.foot { margin-top: 12px; font-size: 11px; color: #B6AFA1; letter-spacing: .5px; }
+/* 胜利提示：直接覆盖在计分块（步数/用时）上，高度与之一致 */
+.win-pop {
+  position: absolute; inset: 0; border-radius: 14px; background: #fff;
+  display: none; align-items: center; padding: 0 14px; gap: 9px;
+  box-shadow: 0 2px 10px rgba(120,110,90,.08); z-index: 20;
+  opacity: 0; transition: opacity .22s ease-out;
+}
+.win-pop.show { display: flex; opacity: 1; }
+.win-badge {
+  flex: none; width: 30px; height: 30px; line-height: 30px; text-align: center; border-radius: 50%;
+  font-size: 15px; color: #fff; background: linear-gradient(135deg,#4CC48A,#2E9B69);
+}
+.win-title { flex: none; font-size: 16px; font-weight: 600; color: #2F2C27; }
+.win-sub { flex: none; font-size: 11px; color: #9C9587; white-space: nowrap; }
+.win-btn {
+  flex: none; margin-left: auto; width: 82px; height: 32px; line-height: 32px; text-align: center;
+  border-radius: 8px; font-size: 12px; color: #fff; cursor: pointer;
+  background: linear-gradient(135deg,#4A82E8,#3563C8);
+}
+.win-link { flex: none; font-size: 11px; color: #A9A294; cursor: pointer; padding: 4px 2px; }
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="hud">
+    <div class="hud-item"><div class="hud-num" id="steps">0</div><div class="hud-label">步数</div></div>
+    <div class="hud-item"><div class="hud-num" id="time">00:00</div><div class="hud-label">用时</div></div>
+    <div class="hud-item"><div class="hud-num" id="done">36<small>/36</small></div><div class="hud-label">已归位</div></div>
+    <div class="win-pop" id="mask">
+      <div class="win-badge">✓</div>
+      <div class="win-title">复原成功</div>
+      <div class="win-sub" id="winSub"></div>
+      <div class="win-btn" id="winBtn">再来一局</div>
+      <div class="win-link" id="winLink">看看原始排列</div>
+    </div>
+  </div>
+  <div class="bar"><div class="bar-fill" id="bar"></div></div>
+  <div class="board-wrap"><canvas id="board"></canvas></div>
+  <div class="tip" id="tip">按住任意外圈，沿圆周方向拨动；捏住中心转子左右拨动换珠</div>
+  <div class="levels" id="levels"></div>
+  <div class="actions">
+    <div class="btn primary" id="shuffle">一键打乱</div>
+    <div class="btn" id="undo">撤销</div>
+    <div class="btn" id="reset">重来</div>
+  </div>
+  <div class="actions learn-row">
+    <div class="btn learn-btn" id="learn">学习模式</div>
+    <div class="btn next" id="next" style="display:none">下一步</div>
+  </div>
+  <div class="foot">3 圈 × 12 颗 = 36 颗珠 · 每次换圈只动 6 颗</div>
+</div>
+<script>
+(function () {
+  var __mods = {};
+  function __norm(p) { return String(p).replace(/^.*[\\/]/, ''); }
+  window.__mods = __mods;
+  window.require = function (p) {
+    var k = __norm(p);
+    if (!(k in __mods)) throw new Error('模块未找到: ' + p);
+    return __mods[k];
+  };
+  window.__define = function (name, fn) {
+    var mod = { exports: {} };
+    fn(mod, mod.exports, window.require);
+    __mods[name] = mod.exports;
+  };
+})();
+window.__define("game.js", function (module, exports, require) {
+/**
+ * 滚珠魔方豆 · 核心逻辑（纯数据，不依赖渲染 / 小程序 API）
+ * ---------------------------------------------------------------
+ * 依据《滚珠魔方豆-玩法与设计说明》v3：
+ *   3 个外圈 × 12 个珠位 = 36 颗珠；3 种颜色各 12 颗。
+ *   每圈 12 位 = 闸口 A + 中间珠 + 闸口 B + 9 颗私有珠。
+ *
+ * 状态表示（关键设计）：
+ *   state[r][i]  = 珠位 i 里那颗珠的颜色号（珠位固定在圈体上，不随转动改变）
+ *   phase[r]     = 圈体的档位（0..11），转 1 档 = 30°
+ *   —— 转外圈只改 phase，珠子没换位置，只是"哪两个珠位正好压在闸口上"变了。
+ *      这等价于"圈内整体平移"，但写起来最不容易错。
+ *
+ * 闸口：圈体档位为 m 时，压在两交点上的珠位是 slot m 与 slot m+2。
+ * 中心转子转 1 档（120°）时：每圈闸口上的 2 颗珠整组送给下一个外圈。
+ */
+
+var N = 12;          // 每圈珠位数
+var RINGS = 3;       // 外圈数
+var COLORS = 3;      // 颜色数
+var GATE_SPAN = 2;   // 两闸口在圈体上相隔 2 个珠距（60°），中间夹 1 颗
+
+function mod(a, n) { return ((a % n) + n) % n; }
+
+/** 每圈一个颜色（上圈 0、左下 1、右下 2）——初始态即已复原 */
+function createState() {
+  var s = [];
+  for (var r = 0; r < RINGS; r++) {
+    var row = [];
+    for (var i = 0; i < N; i++) row.push(r);
+    s.push(row);
+  }
+  return s;
+}
+
+function createPhase() { return [0, 0, 0]; }
+
+function cloneState(s) {
+  var out = [];
+  for (var r = 0; r < s.length; r++) out.push(s[r].slice());
+  return out;
+}
+
+/** 圈体档位 m 时，两个闸口所在的珠位下标 */
+function gateSlots(m) {
+  var a = mod(m, N);
+  return [a, mod(a + GATE_SPAN, N)];
+}
+
+/**
+ * 转外圈：只改相位。
+ * @param {number[]} phase
+ * @param {number} ring  0..2
+ * @param {number} d     档数，正负皆可（+1 = 圈体逆时针走 1 档）
+ */
+function turnRing(phase, ring, d) {
+  phase[ring] = mod(phase[ring] + d, N);
+}
+
+/**
+ * 转中心转子：闸口上的 6 颗珠（每圈 2 颗）整组换圈。
+ * @param {number[][]} state
+ * @param {number[]} phase
+ * @param {number} dir  +1 或 -1（+1 表示 r → r+1，即逆时针 120°）
+ */
+function turnCenter(state, phase, dir) {
+  var g = [gateSlots(phase[0]), gateSlots(phase[1]), gateSlots(phase[2])];
+  var take = [];
+  for (var r = 0; r < RINGS; r++) {
+    take.push([state[r][g[r][0]], state[r][g[r][1]]]);
+  }
+  for (var r2 = 0; r2 < RINGS; r2++) {
+    var dst = mod(r2 + dir, RINGS);
+    state[dst][g[dst][0]] = take[r2][0];
+    state[dst][g[dst][1]] = take[r2][1];
+  }
+}
+
+/** 每个外圈 12 颗同色即胜（三圈颜色必然互不相同） */
+function isSolved(state) {
+  for (var r = 0; r < RINGS; r++) {
+    var c = state[r][0];
+    for (var i = 1; i < N; i++) if (state[r][i] !== c) return false;
+  }
+  return true;
+}
+
+/** 统计进度：处于"最终所属圈"的珠子数 0..36（取 6 种配色方案中的最优者） */
+function progress(state) {
+  var perms = [[0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]];
+  var best = 0;
+  for (var p = 0; p < perms.length; p++) {
+    var cnt = 0;
+    for (var r = 0; r < RINGS; r++) {
+      for (var i = 0; i < N; i++) if (state[r][i] === perms[p][r]) cnt++;
+    }
+    if (cnt > best) best = cnt;
+  }
+  return best;
+}
+
+/** 随机数：可注入，便于测试复现 */
+function randInt(n, rnd) { return Math.floor((rnd || Math.random)() * n); }
+
+/**
+ * 生成一串"打乱"操作。全部由合法转动组成 → 打乱局面**必定可解**。
+ * @param {number} steps 步数（难度）
+ * @param {function} [rnd]
+ * @return {Array<{t:string,r?:number,d:number}>}
+ */
+function makeScramble(steps, rnd) {
+  var moves = [];
+  var last = null;
+  for (var k = 0; k < steps; k++) {
+    var m;
+    var guard = 0;
+    do {
+      if ((rnd || Math.random)() < 0.34) {
+        m = { t: 'c', d: (rnd || Math.random)() < 0.5 ? 1 : -1 };
+      } else {
+        var r = randInt(RINGS, rnd);
+        var d = randInt(N - 1, rnd) + 1;              // 1..11
+        if ((rnd || Math.random)() < 0.5) d = -d;
+        m = { t: 'r', r: r, d: d };
+      }
+      guard++;
+    } while (last && guard < 24 && (
+      (m.t === 'c' && last.t === 'c') ||
+      (m.t === 'r' && last.t === 'r' && last.r === m.r && mod(m.d, N) === mod(-last.d, N))
+    ));
+    moves.push(m);
+    last = m;
+  }
+  return moves;
+}
+
+function invert(move) {
+  if (move.t === 'c') return { t: 'c', d: -move.d };
+  return { t: 'r', r: move.r, d: mod(-move.d, N) };
+}
+
+/** 应用一步操作 */
+function applyMove(state, phase, move) {
+  if (move.t === 'c') turnCenter(state, phase, move.d);
+  else turnRing(phase, move.r, move.d);
+}
+
+/** 连续应用一串操作 */
+function applyMoves(state, phase, moves) {
+  for (var i = 0; i < moves.length; i++) applyMove(state, phase, moves[i]);
+}
+
+module.exports = {
+  N: N,
+  RINGS: RINGS,
+  COLORS: COLORS,
+  GATE_SPAN: GATE_SPAN,
+  mod: mod,
+  createState: createState,
+  createPhase: createPhase,
+  cloneState: cloneState,
+  gateSlots: gateSlots,
+  turnRing: turnRing,
+  turnCenter: turnCenter,
+  isSolved: isSolved,
+  progress: progress,
+  makeScramble: makeScramble,
+  invert: invert,
+  applyMove: applyMove,
+  applyMoves: applyMoves
+};
+
+});
+
+window.__define("geo.js", function (module, exports, require) {
+/**
+ * 滚珠魔方豆 · 几何常量与坐标换算
+ * 完全按《玩法与设计说明》v3 §8.2 的规格（单位 mm）：
+ *   外圈半径 r₀ = 18、圈心距 R = 30、转子轨迹 r_c = 17、珠径 7.5、每圈 12 位
+ *   两圆交点解出：闸口在圈体上相隔 60°（2 个珠距），在盘心上相隔 2A ≈ 64°
+ */
+
+var DEG = Math.PI / 180;
+
+var R = 30.0;        // 外圈圆心距盘心
+var RO = 18.0;       // 外圈半径
+var RC = 17.0;       // 中心转子轨迹半径
+var BEAD_R = 3.75;   // 珠半径（直径 7.5）
+var DISC_R = 52.6;   // 盘面可视半径（51.75 + 轮缘）
+
+var SLOTS = 12;                       // 每圈珠位数
+var STEP = 360 / SLOTS;               // 30° / 档
+var RING_ANGLE = [90, 210, 330];      // 三圈圈心的盘心极角（上、左下、右下）
+
+// 中心转子（可放大视觉而不影响珠道：轴毂必须让开闸口珠内缘 13.25mm）
+var HUB_R = 12.2;        // 轴毂可视半径（原 9.4，放大后手感更好）
+var CENTER_TOUCH = 13.2; // 转子触摸判定半径（贴住闸口珠内缘 13.25，捏珠不打架）
+
+// 闸口（两圆交点）
+var GATE_DISC_HALF = Math.acos((R * R + RC * RC - RO * RO) / (2 * R * RC)) / DEG;   // ≈ 32.0°
+var GATE_LOCAL = Math.acos((RC * RC - R * R - RO * RO) / (2 * R * RO)) / DEG;        // ≈ 150.0°
+
+/** 返回圈心坐标 [x, y]（mm，数学系 y 向上） */
+function ringCenter(k) {
+  var a = RING_ANGLE[k] * DEG;
+  return [R * Math.cos(a), R * Math.sin(a)];
+}
+
+/** 第 k 圈第 i 个珠位的基础局部角（未叠加圈体旋转） */
+function slotBaseAngle(k, i) {
+  return RING_ANGLE[k] - GATE_LOCAL - i * STEP;
+}
+
+/**
+ * 第 k 圈第 i 个珠位在"圈体旋转了 rot 度"时的实际坐标
+ * @param {number} k 圈号
+ * @param {number} i 珠位号
+ * @param {number} rot 圈体累计旋转角（度），= 30*phase + 拖动余量
+ */
+function slotPoint(k, i, rot) {
+  var c = ringCenter(k);
+  var a = (slotBaseAngle(k, i) + rot) * DEG;
+  return [c[0] + RO * Math.cos(a), c[1] + RO * Math.sin(a)];
+}
+
+/**
+ * 闸口坐标。【重要】闸口是两条圆的交点，在盘面上是**固定点**，不随转子转动而移动。
+ * @param {number} k 圈号
+ * @param {number} s -1 或 +1，对应闸口 A / 闸口 B
+ * @param {number} [rho] 转子瞬时偏转角（仅动画中非 0）
+ */
+function gatePoint(k, s, rho) {
+  var a = (RING_ANGLE[k] + s * GATE_DISC_HALF + (rho || 0)) * DEG;
+  return [RC * Math.cos(a), RC * Math.sin(a)];
+}
+
+/** 转子某条爪指的爪尖坐标（三条爪各自对准一个外圈） */
+function clawTip(k, s, rho) {
+  return gatePoint(k, s, rho);
+}
+
+module.exports = {
+  DEG: DEG,
+  R: R, RO: RO, RC: RC, BEAD_R: BEAD_R, DISC_R: DISC_R,
+  HUB_R: HUB_R, CENTER_TOUCH: CENTER_TOUCH,
+  SLOTS: SLOTS, STEP: STEP, RING_ANGLE: RING_ANGLE,
+  GATE_DISC_HALF: GATE_DISC_HALF, GATE_LOCAL: GATE_LOCAL,
+  ringCenter: ringCenter,
+  slotBaseAngle: slotBaseAngle,
+  slotPoint: slotPoint,
+  gatePoint: gatePoint,
+  clawTip: clawTip
+};
+
+});
+
+window.__define("solver.js", function (module, exports, require) {
+/**
+ * 滚珠魔方豆 · 自动求解器 v4
+ * ---------------------------------------------------------------
+ * 四层结构：
+ *
+ * ① 构成层（反向闭包）：只看"每圈每种颜色几颗"（3×3 表，行和 = 列和 = 12）。
+ *    从 6 个目标构成反向 BFS 一次建缓存（4186 个构成、深度 ≤5），
+ *    任何局面的"构成距离"O(深度) 查表。用于引导搜索方向。
+ *    （为什么不能拿错位珠数做贪心：存在"两圈互持对方错珠"的结构，
+ *      必须先变差才能变好，只有搜索能穿过去。）
+ *
+ * ② 宏观步枚举：一个"宏观步" = 三圈各转到选定相位 + 中心转 1 档。
+ *    关键约束：两颗珠必须恰好隔 2 个珠位（同奇偶）才能同时压上闸口，
+ *    所以只有**实际可呈现**的给出对才可行——构成模型里"给得起"
+ *    ≠"摆得上闸口"，这是构成计划经常物理不可实现的根因。
+ *
+ * ③ 求解流水线（solveBlocks，分块 = 学习模式一次点击的动作）：
+ *      a. 贪心下降块：只走闭包距离严格递减的宏观步（≤5 块，天然终止）；
+ *      b. 相位归零块；
+ *      c. 交换子收尾：C(k,δ,dir) = Rk(δ)X(dir)Rk(-δ)X(-dir) 是 5-循环，
+ *         共轭后可把珠在任意两环间搬运。选交换子不看代数——直接按
+ *         O(1) 收益公式挑"目标圈正确珠数 +1"的块，逐块消错，保证终止。
+ *      （可选 a0. 布局感知 DFS 短解，默认停用——收益微小且耗时。）
+ *      最终在干净副本上完整重放并校验 isSolved，失败转历史兜底。
+ *
+ * ④ 兜底：历史逆序回做（必定可行）。
+ */
+
+var G = require('./game.js');
+
+var N = G.N;
+var R3 = G.RINGS;
+
+// ────────────── 构成层 ──────────────
+function cloneState(s) {
+  var out = [];
+  for (var r = 0; r < R3; r++) out.push(s[r].slice());
+  return out;
+}
+
+function countsOf(state) {
+  var c = [];
+  for (var r = 0; r < R3; r++) {
+    var row = [0, 0, 0];
+    for (var i = 0; i < N; i++) row[state[r][i]]++;
+    c.push(row);
+  }
+  return c;
+}
+
+/** 9 个计数（各 0..12，4bit）打包成一个数字键 */
+function countsKey(c) {
+  var k = 0;
+  for (var r = R3 - 1; r >= 0; r--) {
+    for (var i = 2; i >= 0; i--) k = k * 16 + c[r][i];
+  }
+  return k;
+}
+
+function isGoalCounts(c) {
+  var P = [[0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]];
+  for (var p = 0; p < P.length; p++) {
+    var ok = true;
+    for (var r = 0; r < R3; r++) if (c[r][P[p][r]] !== N) { ok = false; break; }
+    if (ok) return true;
+  }
+  return false;
+}
+
+/** 圈 r 能给出的 2 颗颜色组合（多重集，a≤b） */
+function givePairs(row) {
+  var out = [];
+  for (var a = 0; a < 3; a++) {
+    for (var b = a; b < 3; b++) {
+      if (a === b) { if (row[a] >= 2) out.push([a, b]); }
+      else if (row[a] >= 1 && row[b] >= 1) out.push([a, b]);
+    }
+  }
+  return out;
+}
+
+/** 与 game.turnCenter 一致：dir=+1 时圈 r 收下圈 (r-dir+3)%3 的给出 */
+function applyTurnCounts(c, dir, Gv) {
+  var out = [];
+  for (var r = 0; r < R3; r++) {
+    var src = ((r - dir) % R3 + R3) % R3;
+    var row = c[r].slice();
+    row[Gv[r][0]]--; row[Gv[r][1]]--;
+    row[Gv[src][0]]++; row[Gv[src][1]]++;
+    out.push(row);
+  }
+  return out;
+}
+
+/**
+ * 反向闭包缓存（模块级，只建一次）：
+ * 目标区域固定（6 个对角构成），从目标反向 BFS 一次，得到
+ *   cache[key] = { dist, dir, G }
+ * 其中 (dir, G) 是"从该构成朝目标走一步"的边。
+ * 之后任何求解都是沿缓存边下行，O(构成深度) 查表，零搜索。
+ */
+var _cache = null;
+
+function backwardClosure() {
+  if (_cache) return _cache;
+
+  var cache = {};
+  var queue = [];
+  var head = 0, tail = 0;
+
+  function push(c, dist, dir, Gv) {
+    var k = countsKey(c);
+    if (cache[k]) return;
+    cache[k] = { dist: dist, dir: dir === undefined ? 0 : dir, G: Gv || null };
+    queue[tail++] = c;
+  }
+
+  // 6 个目标构成入队
+  var P = [[0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]];
+  for (var p = 0; p < P.length; p++) {
+    var g = [];
+    for (var r = 0; r < R3; r++) {
+      var row = [0, 0, 0];
+      row[P[p][r]] = N;
+      g.push(row);
+    }
+    push(g, 0);
+  }
+
+  // 反向扩展：对每个已点 x，枚举所有前驱 y（apply(y,dir,G)=x），y 的下行边即 (dir,G)
+  var allPairs = [[0, 0], [0, 1], [0, 2], [1, 1], [1, 2], [2, 2]];
+  while (head < tail) {
+    var x = queue[head++];
+    var xd = cache[countsKey(x)].dist;
+    for (var dir = -1; dir <= 1; dir += 2) {
+      for (var a = 0; a < 6; a++) {
+        for (var b = 0; b < 6; b++) {
+          for (var d = 0; d < 6; d++) {
+            var Gv = [allPairs[a], allPairs[b], allPairs[d]];
+            // 前向：x_r = y_r - count(G[r]) + count(G[src_r])，src_r = (r-dir+3)%3
+            // 反解：y_r = x_r - count(G[src_r]) + count(G[r])
+            // 校验：x 给得出 G[src_r]（⇔ y 给得出 G[r]），且 y 各计数 ≥ 0
+            var y = [], ok = true;
+            for (var r2 = 0; r2 < R3 && ok; r2++) {
+              var src = ((r2 - dir) % R3 + R3) % R3;
+              var gp = Gv[src], gr = Gv[r2];
+              if (x[r2][gp[0]] < 1 || x[r2][gp[1]] < 1 ||
+                  (gp[0] === gp[1] && x[r2][gp[0]] < 2)) { ok = false; break; }
+              var row = x[r2].slice();
+              row[gp[0]]--; row[gp[1]]--;
+              row[gr[0]]++; row[gr[1]]++;
+              for (var c2 = 0; c2 < 3; c2++) if (row[c2] < 0) { ok = false; break; }
+              y.push(row);
+            }
+            if (!ok) continue;
+            var k2 = countsKey(y);
+            if (cache[k2]) continue;
+            cache[k2] = { dist: xd + 1, dir: dir, G: Gv };
+            queue[tail++] = y;
+          }
+        }
+      }
+    }
+  }
+  _cache = cache;
+  return cache;
+}
+
+/**
+ * 构成计划：沿缓存边从当前构成下行到目标。
+ * @returns [{dir, G}] 或 null（构成不在闭包内——合法对局不会发生）
+ */
+function bfsPlan(counts0) {
+  if (isGoalCounts(counts0)) return [];
+  var cache = backwardClosure();
+  var k = countsKey(counts0);
+  if (!cache[k]) return null;
+  var out = [];
+  var c = counts0;
+  while (!isGoalCounts(c)) {
+    var e = cache[countsKey(c)];
+    if (!e || !e.G) return null;
+    out.push({ dir: e.dir, G: e.G });
+    c = applyTurnCounts(c, e.dir, e.G);
+  }
+  return out;
+}
+
+// ────────────── 实现层 ──────────────
+/** 会话：携带工作副本 + 输出序列，所有操作经它落账 */
+function session(state, phase) {
+  return {
+    state: cloneState(state),
+    phase: phase.slice(),
+    moves: [],
+    ring: function (r, toPhase) {
+      var d = ((toPhase - this.phase[r]) % N + N) % N;
+      if (d > N / 2) d -= N;
+      if (d === 0) return;
+      this.moves.push({ t: 'r', r: r, d: d });
+      G.turnRing(this.phase, r, d);
+    },
+    center: function (dir) {
+      this.moves.push({ t: 'c', d: dir });
+      G.turnCenter(this.state, this.phase, dir);
+    }
+  };
+}
+
+/** 圈 r 相位 p 时闸口两珠颜色（升序二字符，如 "02"） */
+function gateColors(state, r, p) {
+  var a = state[r][p], b = state[r][(p + 2) % N];
+  return a < b ? ('' + a + b) : ('' + b + a);
+}
+
+/** 圈 r 有哪些相位，闸口颜色等于 want（二字符） */
+function phasesFor(state, r, want) {
+  var out = [];
+  for (var p = 0; p < N; p++) if (gateColors(state, r, p) === want) out.push(p);
+  return out;
+}
+
+function pairKey(G) { return '' + G[0] + G[1]; }
+
+/** 圈 r 当前 12 个闸口对位置上实际呈现的颜色对（多重集键 "ab"，去重） */
+function presentablePairs(state, r) {
+  var seen = {};
+  var out = [];
+  for (var m = 0; m < N; m++) {
+    var k = gateColors(state, r, m);
+    if (!seen[k]) { seen[k] = true; out.push(k); }
+  }
+  return out;
+}
+
+/** 局面哈希（圈体本地序列 + 相位，规范化圈体旋转自由度） */
+function layoutKey(state, phase) {
+  var parts = [];
+  for (var r = 0; r < R3; r++) {
+    var p = phase[r] % N;
+    var seq = [];
+    for (var i = 0; i < N; i++) seq.push(state[r][(p + i) % N]);
+    // 取字典序最小的旋转作规范形
+    var best = 0;
+    for (var s = 1; s < N; s++) {
+      for (var j = 0; j < N; j++) {
+        var a = seq[(s + j) % N], b = seq[(best + j) % N];
+        if (a !== b) { if (a < b) best = s; break; }
+      }
+    }
+    var rot = [];
+    for (var i2 = 0; i2 < N; i2++) rot.push(seq[(best + i2) % N]);
+    parts.push(rot.join(''));
+  }
+  return parts.join('|');
+}
+
+/**
+ * 枚举当前所有"宏观步"（各圈转到选定相位 + 中心转 1 档）。
+ * 每个宏观步 = { dir, G(各圈给出对), ps(各圈目标相位), dist(落点闭包距离),
+ *               wrong(落点错位珠数，full 时才算), cost(圈转档数) }，按优劣排序。
+ * @param {boolean} full true 时额外计算错位珠数（较贵，仅单步选择用）
+ */
+function enumerateMacros(S, cache, full) {
+  var c = countsOf(S.state);
+  var e = cache[countsKey(c)];
+  var curDist = e ? e.dist : 99;
+  var pres = [presentablePairs(S.state, 0), presentablePairs(S.state, 1), presentablePairs(S.state, 2)];
+  var out = [];
+
+  for (var dir = -1; dir <= 1; dir += 2) {
+    for (var a = 0; a < pres[0].length; a++) {
+      for (var b = 0; b < pres[1].length; b++) {
+        for (var d = 0; d < pres[2].length; d++) {
+          var Gv = [
+            [+pres[0][a][0], +pres[0][a][1]],
+            [+pres[1][b][0], +pres[1][b][1]],
+            [+pres[2][d][0], +pres[2][d][1]]
+          ];
+          var nc = applyTurnCounts(c, dir, Gv);
+          var ne = cache[countsKey(nc)];
+          if (!ne) continue;                     // 落点脱离闭包（不应发生）
+
+          // 落成真实转动：每圈选转动代价最小的呈现相位
+          var ps = [], cost = 0, ok = true;
+          for (var r = 0; r < R3; r++) {
+            var cand = phasesFor(S.state, r, pairKey(Gv[r]));
+            if (!cand.length) { ok = false; break; }
+            var bp = cand[0], bc = 1e9;
+            for (var q = 0; q < cand.length; q++) {
+              var dd = ((cand[q] - S.phase[r]) % N + N) % N;
+              var cc = dd <= N / 2 ? dd : N - dd;
+              if (cc < bc) { bc = cc; bp = cand[q]; }
+            }
+            ps.push(bp); cost += bc;
+          }
+          if (!ok) continue;
+
+          var m = { dir: dir, G: Gv, ps: ps, cost: cost, dist: ne.dist, distDelta: ne.dist - curDist, wrong: 0 };
+          if (full) {
+            var st = cloneState(S.state), ph = S.phase.slice();
+            for (var r2 = 0; r2 < R3; r2++) if (ps[r2] !== S.phase[r2]) G.turnRing(ph, r2, ((ps[r2] - S.phase[r2]) % N + N) % N);
+            G.turnCenter(st, ph, dir);
+            m.wrong = 36 - G.progress(st);
+          }
+          out.push(m);
+        }
+      }
+    }
+  }
+  if (full) {
+    out.sort(function (x, y) {
+      return x.distDelta - y.distDelta || x.wrong - y.wrong || x.cost - y.cost;
+    });
+  } else {
+    out.sort(function (x, y) {
+      return x.distDelta - y.distDelta || x.cost - y.cost;
+    });
+  }
+  return out;
+}
+
+/** 对宏观步落成真实移动序列（3 圈转 + 1 中心转），推入 S */
+function applyMacro(S, macro) {
+  for (var r = 0; r < R3; r++) S.ring(r, macro.ps[r]);
+  S.center(macro.dir);
+}
+
+/**
+ * 布局感知 DFS：只走"可呈现"的宏观步，优先闭包距离递减。
+ * 带全局失败记忆（同布局不再重试），节点预算兜底。
+ * @returns 完整移动序列 或 null
+ */
+function realizeFull(state0, phase0, rnd, nodeBudget) {
+  var cache = backwardClosure();
+  var S = session(state0, phase0);
+  var nodes = 0;
+  var MAX_NODES = nodeBudget || 0;       // 默认停用（交换子层已保证 100% 可解）
+  var failed = {};                       // 布局哈希 → 已证死路
+
+  function dfs(depth) {
+    var c = countsOf(S.state);
+    if (isGoalCounts(c)) return true;
+    if (depth > 9 || ++nodes > MAX_NODES) return false;
+
+    var hk = layoutKey(S.state, S.phase);
+    if (failed[hk]) return false;
+
+    var macros = enumerateMacros(S, cache, false);
+    for (var i = 0; i < macros.length; i++) {
+      var m = macros[i];
+      if (m.distDelta > 0 && depth > 5) continue;    // 深层不再升距
+      var snap = { st: cloneState(S.state), ph: S.phase.slice(), len: S.moves.length };
+      applyMacro(S, m);
+      if (dfs(depth + 1)) return true;
+      S.state = snap.st; S.phase = snap.ph; S.moves.length = snap.len;
+    }
+    failed[hk] = true;
+    return false;
+  }
+
+  if (dfs(0)) return S.moves;
+  return null;
+}
+
+// ────────────── 对外 API ──────────────
+/** 保底：历史逆序回做 */
+function solveByHistory(history) {
+  var out = [];
+  for (var i = history.length - 1; i >= 0; i--) out.push(G.invert(history[i]));
+  return out;
+}
+
+// ────────────── 交换子层（保证收尾） ──────────────
+// C(k,δ,dir) = Rk(δ)·X(dir)·Rk(-δ)·X(-dir) 是一个 5-循环/4-循环置换，
+// 配合共轭（先转别的圈）可把珠在任意两环间搬运。库在"相位 0"基准下
+// 预计算全部变体的珠置换；使用前先把相位归零，效果即与库完全一致。
+// 选交换子不看代数——直接在当前局面上模拟收益（目标圈正确珠数 +1），
+// 从机制上排除推导错误。
+
+/** 带标签珠置换：返回 id → [圈, 槽] */
+function beadPermOf(moves) {
+  var st = [], r, i;
+  for (r = 0; r < R3; r++) {
+    var row = [];
+    for (i = 0; i < N; i++) row.push(r * N + i);
+    st.push(row);
+  }
+  var ph = [0, 0, 0];
+  G.applyMoves(st, ph, moves);
+  var perm = [];
+  for (r = 0; r < R3; r++) for (i = 0; i < N; i++) perm[st[r][i]] = [r, i];
+  return perm;
+}
+
+/** 连续同圈旋转合并（工程优化，减步数） */
+function mergeMoves(seq) {
+  var out = [];
+  for (var i = 0; i < seq.length; i++) {
+    var m = seq[i];
+    var last = out.length ? out[out.length - 1] : null;
+    if (m.t === 'r' && last && last.t === 'r' && last.r === m.r) {
+      last.d = G.mod(last.d + m.d, N);
+      if (last.d === 0) out.pop();
+    } else {
+      out.push({ t: m.t, r: m.r, d: m.d });
+    }
+  }
+  return out;
+}
+
+/** 数某圈某种颜色珠数 */
+function countColor(state, r, c) {
+  var n = 0;
+  for (var i = 0; i < N; i++) if (state[r][i] === c) n++;
+  return n;
+}
+
+var _commTypes = null;
+/**
+ * 交换子类型库（12 个描述符，一次构建，毫秒级）：
+ * C(k,δ,dir) 共轭后是单条 5-循环，跨环转移恰好两条：
+ *   T1: 圈k 槽(a+o1)   → 圈j 槽(b+q1)
+ *   T2: 圈j 槽(b+q2)   → 圈k 槽(a+o2)
+ * 偏移 (o1,q1,q2,o2) 只取决于 (k,dir,δ)，(a,b) 只是平移参与槽位。
+ * 因此收益可 O(1) 计算：gain(圈k 得色 c) = [圈j(b+q2) 有 c] - [圈k(a+o1) 有 c]。
+ */
+function commTypes() {
+  if (_commTypes) return _commTypes;
+  var types = [];
+  for (var k = 0; k < R3; k++) {
+    for (var di = 0; di < 2; di++) {
+      var dir = di === 0 ? 1 : -1;
+      var j = ((k - dir) % R3 + R3) % R3;
+      for (var dsi = 0; dsi < 2; dsi++) {
+        var delta = dsi === 0 ? 2 : -2;
+        var base = [{ t: 'r', r: k, d: delta }, { t: 'c', d: dir }, { t: 'r', r: k, d: -delta }, { t: 'c', d: -dir }];
+        var perm = beadPermOf(base);
+        // 提取跨环转移
+        var t1 = null, t2 = null;
+        for (var id = 0; id < 36; id++) {
+          var from = [((id / N) | 0), id % N];
+          var to = perm[id];
+          if (to[0] === from[0]) continue;
+          if (to[0] === j) t1 = { o1: from[1], q1: to[1] };
+          else if (to[0] === k) t2 = { q2: from[1], o2: to[1] };
+        }
+        if (!t1 || !t2) continue;               // 结构异常，跳过该类型
+        types.push({ k: k, j: j, dir: dir, delta: delta, o1: t1.o1, q1: t1.q1, o2: t2.o2, q2: t2.q2, base: base });
+      }
+    }
+  }
+  _commTypes = types;
+  return types;
+}
+
+/**
+ * 在类型库里挑一个"让圈 rk 的颜色 c 净增 ≥1"的交换子，落成移动块。
+ * forbid: 不许触碰的圈（已封盘的圈）。
+ * @returns 移动数组 或 null
+ */
+function pickSwap(state, phase, rk, c, forbid) {
+  var types = commTypes();
+  var best = null, bestKey = 1e9;
+  for (var t = 0; t < types.length; t++) {
+    var tp = types[t];
+    if (tp.k !== rk && tp.j !== rk) continue;   // 必须触及目标圈
+    if (tp.k !== rk) continue;                  // 收益按"接收端 = 目标圈"计
+    if (forbid.indexOf(tp.k) >= 0 || forbid.indexOf(tp.j) >= 0) continue;
+
+    var hasInJ = false;
+    for (var w = 0; w < N; w++) if (state[tp.j][(w + tp.q2) % N] === c) { hasInJ = true; break; }
+    if (!hasInJ) continue;                      // 圈 j 里没有可搬来的 c
+
+    // 枚举 (a,b)：a 决定给出槽（必须非 c），b 决定来源槽（必须 c）
+    for (var b2 = 0; b2 < N; b2++) {
+      if (state[tp.j][(b2 + tp.q2) % N] !== c) continue;
+      for (var a2 = 0; a2 < N; a2++) {
+        if (state[tp.k][(a2 + tp.o1) % N] === c) continue;   // 给出的不能是 c
+        var key = a2 * 16 + b2;
+        if (key < bestKey) {
+          bestKey = key;
+          var seq = [{ t: 'r', r: tp.k, d: a2 }, { t: 'r', r: tp.j, d: b2 }]
+            .concat(tp.base)
+            .concat([{ t: 'r', r: tp.k, d: (N - a2) % N }, { t: 'r', r: tp.j, d: (N - b2) % N }]);
+          var nz = [];
+          for (var z = 0; z < seq.length; z++) if (seq[z].d % N !== 0) nz.push(seq[z]);
+          best = mergeMoves(nz);
+        }
+      }
+    }
+    if (best) break;                            // 第一个可行类型即可（收益恒 +1）
+  }
+  return best;
+}
+
+/**
+ * 分块求解（供学习模式：一个块 = 一次点击的完整动作）。
+ * ① 有界布局感知 DFS（块 = [拨圈×3, 中心转] 宏观步）
+ * ② 贪心下降块（闭包距离严格递减，不会绕圈）
+ * ③ 相位归零 + 交换子收尾（模拟收益选块，保证终止）
+ * 任一环节产物都整体重放校验；失败转历史兜底。
+ * @returns {Array<Array>} 块数组；每块是若干移动
+ */
+function solveBlocks(state0, phase0, opts) {
+  opts = opts || {};
+  var rnd = opts.rnd || Math.random;
+  if (G.isSolved(state0)) return [];
+
+  // a0. 布局感知 DFS 完整短解（默认停用，opts.budget > 0 启用）
+  var flat = null;
+  if (opts.budget > 0) {
+    try { flat = realizeFull(state0, phase0, rnd, opts.budget); } catch (e) { flat = null; }
+    if (flat && flat.length) {
+      var stv = cloneState(state0), phv = phase0.slice();
+      G.applyMoves(stv, phv, flat);
+      if (G.isSolved(stv)) {
+        var blocks = [], cur = [];
+        for (var i = 0; i < flat.length; i++) {
+          cur.push(flat[i]);
+          if (flat[i].t === 'c') { blocks.push(cur); cur = []; }
+        }
+        if (cur.length) blocks.push(cur);
+        return blocks;
+      }
+    }
+  }
+
+  var blocks = [];
+  var st = cloneState(state0), ph = phase0.slice();
+
+  // ② 贪心下降（只走闭包距离递减的宏观步，天然终止）
+  try {
+    var cache = backwardClosure();
+    for (var step = 0; step < 6; step++) {
+      if (G.isSolved(st)) break;
+      var S = session(st, ph);
+      var macros = enumerateMacros(S, cache, true);
+      var pickM = null;
+      for (var m = 0; m < macros.length; m++) {
+        if (macros[m].distDelta < 0) { pickM = macros[m]; break; }
+      }
+      if (!pickM) break;
+      var mv = [];
+      for (var r = 0; r < R3; r++) {
+        var dd = ((pickM.ps[r] - ph[r]) % N + N) % N;
+        if (dd > N / 2) dd -= N;
+        if (dd !== 0) mv.push({ t: 'r', r: r, d: dd });
+      }
+      mv.push({ t: 'c', d: pickM.dir });
+      G.applyMoves(st, ph, mv);
+      blocks.push(mv);
+    }
+  } catch (e2) {}
+
+  if (G.isSolved(st)) return blocks;
+
+  // ③ 相位归零（交换子库在相位 0 基准下预计算）
+  var norm = [];
+  for (var r3 = 0; r3 < R3; r3++) {
+    if (ph[r3] !== 0) { norm.push({ t: 'r', r: r3, d: G.mod(-ph[r3], N) }); ph[r3] = 0; }
+  }
+  if (norm.length) blocks.push(mergeMoves(norm));
+
+  // 目标配色：6 种排列里挑当前正确珠数最多者
+  var perms = [[0, 1, 2], [0, 2, 1], [1, 0, 2], [1, 2, 0], [2, 0, 1], [2, 1, 0]];
+  var target = perms[0], bestP = -1;
+  for (var p = 0; p < perms.length; p++) {
+    var cnt = 0;
+    for (var rr = 0; rr < R3; rr++) cnt += countColor(st, rr, perms[p][rr]);
+    if (cnt > bestP) { bestP = cnt; target = perms[p]; }
+  }
+
+  // 阶段 A：把圈 0 填满 target[0]（可用圈 1、2 做缓冲）
+  // 阶段 B：圈 1 ← 圈 2 换到各自目标色（圈 0 封盘不动）
+  var stages = [
+    { ring: 0, color: target[0], forbid: [] },
+    { ring: 1, color: target[1], forbid: [0] }
+  ];
+  for (var s = 0; s < stages.length; s++) {
+    var sg = stages[s];
+    var guard = 0;
+    while (countColor(st, sg.ring, sg.color) < N && guard++ < 14) {
+      var swap = pickSwap(st, ph, sg.ring, sg.color, sg.forbid);
+      if (!swap) break;                       // 理论不会发生；兜底在外层
+      G.applyMoves(st, ph, swap);
+      blocks.push(swap);
+    }
+  }
+
+  // 整体校验
+  var fin = cloneState(state0), fph = phase0.slice();
+  for (var b = 0; b < blocks.length; b++) G.applyMoves(fin, fph, blocks[b]);
+  if (G.isSolved(fin)) return blocks;
+
+  // ④ 历史兜底（必定可行）
+  if (opts.history && opts.history.length) {
+    var hist = solveByHistory(opts.history);
+    var hb = [], cc = [];
+    for (var h = 0; h < hist.length; h++) {
+      cc.push(hist[h]);
+      if (hist[h].t === 'c') { hb.push(cc); cc = []; }
+    }
+    if (cc.length) hb.push(cc);
+    return hb;
+  }
+  return null;
+}
+
+/**
+ * 求解（拍平的分块序列，兼容旧接口/测试）。
+ * @returns {Array|null} 操作序列（保证可复原）
+ */
+function solve(state0, phase0, opts) {
+  var blocks = solveBlocks(state0, phase0, opts);
+  if (!blocks) return null;
+  var out = [];
+  for (var b = 0; b < blocks.length; b++) out = out.concat(blocks[b]);
+  return out;
+}
+
+/** 预热：跑一遍小规模完整流水线，触发 JIT，避免首次点击卡顿 */
+function warmup() {
+  try {
+    var st = G.createState(), ph = G.createPhase();
+    G.applyMoves(st, ph, G.makeScramble(14));
+    solveBlocks(st, ph, {});
+  } catch (e) {}
+}
+
+module.exports = {
+  solve: solve,
+  solveBlocks: solveBlocks,
+  solveByHistory: solveByHistory,
+  bfsPlan: bfsPlan,
+  countsOf: countsOf,
+  warmup: warmup
+};
+
+});
+
+window.__define("draw.js", function (module, exports, require) {
+/**
+ * 滚珠魔方豆 · 盘面绘制（Canvas 2D）
+ * 传进来的是"毫米坐标 + 缩放"，所有尺寸都从 geo.js 的规格换算，改规格只需改 geo.js。
+ */
+
+var G = require('./game.js');
+var GEO = require('./geo.js');
+
+// 三种珠子颜色（红 / 蓝 / 黄），配深色描边 + 高光
+var BEAD = [
+  { f: '#E4573D', d: '#A63A22', h: '#F6A28E' },
+  { f: '#2E7BE6', d: '#1B539E', h: '#93C0F8' },
+  { f: '#F0B429', d: '#B07C0C', h: '#FBDE92' }
+];
+
+var C = {
+  board: '#FFFFFF',
+  boardEdge: '#DED7C8',
+  rim: '#E7E1D2',
+  trackOut: '#E7E1D3',
+  trackIn: '#F8F6F0',
+  trackHot: '#BBD6F7',
+  arm: '#A8C8F2',
+  hub: '#DCEAFC',
+  hubEdge: '#96BFF0',
+  pin: '#7FA9DE',
+  gate: '#DFA33D',
+  gateSoft: 'rgba(223,163,61,0.55)',
+  mid: '#2E7BE6',
+  label: '#9A958A',
+  labelSoft: '#BDB7AA'
+};
+
+var LABEL = ['上圈 O', '左下 G', '右下 R'];
+
+function drawBoard(ctx, W, H, V) {
+  var s = V.scale, cx = V.cx, cy = V.cy;
+  var state = V.state, phase = V.phase;
+  var extra = V.ringExtra || [0, 0, 0];
+  var rho = V.rho || 0;
+  var grab = V.grab;
+
+  function X(p) { return cx + p[0] * s; }
+  function Y(p) { return cy - p[1] * s; }
+  function mm(v) { return v * s; }
+
+  ctx.clearRect(0, 0, W, H);
+
+  // ── 盘体 ─────────────────────────────────────────────
+  var bg = ctx.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, '#FCFAF6');
+  bg.addColorStop(1, '#F3EFE6');
+  ctx.beginPath(); ctx.arc(cx, cy, mm(GEO.DISC_R), 0, Math.PI * 2);
+  ctx.fillStyle = bg; ctx.fill();
+  ctx.lineWidth = mm(0.5); ctx.strokeStyle = C.boardEdge; ctx.stroke();
+
+  ctx.beginPath(); ctx.arc(cx, cy, mm(GEO.DISC_R - 1.3), 0, Math.PI * 2);
+  ctx.lineWidth = mm(2.4); ctx.strokeStyle = C.rim; ctx.stroke();
+
+  ctx.beginPath(); ctx.arc(cx, cy, mm(14.6), 0, Math.PI * 2);
+  ctx.lineWidth = mm(0.4); ctx.strokeStyle = 'rgba(200,194,180,0.55)';
+  ctx.setLineDash([mm(1.6), mm(1.6)]); ctx.stroke(); ctx.setLineDash([]);
+
+  // ── 三条外圈珠道 ──────────────────────────────────────
+  for (var k = 0; k < 3; k++) {
+    var c = GEO.ringCenter(k);
+    var cc = { x: X(c), y: Y(c) };
+    var hot = grab && grab.mode === 'ring' && grab.ring === k;
+
+    if (hot) {
+      ctx.beginPath(); ctx.arc(cc.x, cc.y, mm(GEO.RO), 0, Math.PI * 2);
+      ctx.lineWidth = mm(12.4); ctx.strokeStyle = C.trackHot; ctx.stroke();
+    }
+    ctx.beginPath(); ctx.arc(cc.x, cc.y, mm(GEO.RO), 0, Math.PI * 2);
+    ctx.lineWidth = mm(11.4); ctx.strokeStyle = C.trackOut; ctx.stroke();
+
+    ctx.beginPath(); ctx.arc(cc.x, cc.y, mm(GEO.RO), 0, Math.PI * 2);
+    ctx.lineWidth = mm(9.0); ctx.strokeStyle = C.trackIn; ctx.stroke();
+  }
+
+  // ── 转子轨道圆周线（6 个交点珠都落在以盘心为圆、半径 RC 的这条圆上）──
+  var rotorHot = grab && grab.mode === 'center';
+  ctx.beginPath(); ctx.arc(cx, cy, mm(GEO.RC), 0, Math.PI * 2);
+  ctx.lineWidth = mm(rho !== 0 || rotorHot ? 1.0 : 0.6);
+  ctx.strokeStyle = (rho !== 0 || rotorHot) ? 'rgba(90,150,230,0.85)' : 'rgba(120,160,220,0.55)';
+  ctx.stroke();
+  // 轨道线在两交点之间的弧段加亮，突出"6 颗交点珠同圆"的关系
+  ctx.beginPath(); ctx.arc(cx, cy, mm(GEO.RC), 0, Math.PI * 2);
+  ctx.lineWidth = mm(2.2);
+  ctx.strokeStyle = 'rgba(150,190,240,0.18)';
+  ctx.stroke();
+
+  // ── 中心三爪转子 ──────────────────────────────────────
+  for (var k2 = 0; k2 < 3; k2++) {
+    for (var sg = -1; sg <= 1; sg += 2) {
+      var tip = GEO.clawTip(k2, sg, rho);
+      var hubR = 10.6;                      // 爪指从轴心外缘长出（随轴毂放大）
+      var a0 = Math.atan2(tip[1], tip[0]);
+      var from = [Math.cos(a0) * hubR, Math.sin(a0) * hubR];
+      ctx.beginPath();
+      ctx.moveTo(X(from), Y(from));
+      ctx.lineTo(X(tip), Y(tip));
+      ctx.lineWidth = mm(2.5);
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = C.arm;
+      ctx.stroke();
+    }
+  }
+  // 爪尖珠窝
+  for (var k3 = 0; k3 < 3; k3++) {
+    for (var sg3 = -1; sg3 <= 1; sg3 += 2) {
+      var tp = GEO.clawTip(k3, sg3, rho);
+      ctx.beginPath(); ctx.arc(X(tp), Y(tp), mm(GEO.BEAD_R + 0.9), 0, Math.PI * 2);
+      ctx.fillStyle = '#EAF2FD'; ctx.fill();
+      ctx.lineWidth = mm(0.4); ctx.strokeStyle = C.arm; ctx.stroke();
+    }
+  }
+  // 轴心（放大后的中心转子毂，半径见 geo.HUB_R）
+  ctx.beginPath(); ctx.arc(cx, cy, mm(GEO.HUB_R), 0, Math.PI * 2);
+  ctx.fillStyle = C.hub; ctx.fill();
+  ctx.lineWidth = mm(0.6); ctx.strokeStyle = C.hubEdge; ctx.stroke();
+  ctx.beginPath(); ctx.arc(cx, cy, mm(2.7), 0, Math.PI * 2);
+  ctx.fillStyle = C.pin; ctx.fill();
+  // 毂面旋转指示线（让"这是个可转的转子"一眼可读）
+  for (var k5 = 0; k5 < 3; k5++) {
+    var ga = (GEO.RING_ANGLE[k5] + rho) * GEO.DEG;
+    ctx.beginPath();
+    ctx.moveTo(cx + Math.cos(ga) * mm(4.2), cy - Math.sin(ga) * mm(4.2));
+    ctx.lineTo(cx + Math.cos(ga) * mm(GEO.HUB_R - 2.0), cy - Math.sin(ga) * mm(GEO.HUB_R - 2.0));
+    ctx.lineWidth = mm(1.1); ctx.lineCap = 'round';
+    ctx.strokeStyle = 'rgba(120,165,225,0.7)';
+    ctx.stroke();
+  }
+
+  // ── 闸口标记（固定点，不随转子动） ──────────────────────
+  for (var k4 = 0; k4 < 3; k4++) {
+    for (var sg4 = -1; sg4 <= 1; sg4 += 2) {
+      var gp = GEO.gatePoint(k4, sg4, 0);
+      ctx.beginPath(); ctx.arc(X(gp), Y(gp), mm(GEO.BEAD_R + 1.9), 0, Math.PI * 2);
+      ctx.lineWidth = mm(0.5);
+      ctx.strokeStyle = C.gateSoft;
+      ctx.setLineDash([mm(1.3), mm(1.3)]);
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+  }
+
+  // ── 珠子 ─────────────────────────────────────────────
+  var inRotor = [];   // 转子转动中，被"端着走"的闸口珠
+  for (var r = 0; r < 3; r++) {
+    var ph = phase[r] % G.N;
+    var gates = G.gateSlots(ph);
+    var moving = Math.abs(rho) > 0.01;
+    for (var i = 0; i < G.N; i++) {
+      var isGate = (i === gates[0] || i === gates[1]);
+      var rot = 30 * ph + extra[r];
+      var p = GEO.slotPoint(r, i, rot);
+      if (isGate && moving) {
+        var sSign = (i === gates[0]) ? -1 : 1;
+        inRotor.push([GEO.gatePoint(r, sSign, rho), state[r][i], true]);
+      } else {
+        bead(ctx, X(p), Y(p), mm(GEO.BEAD_R), state[r][i], isGate, mm);
+      }
+    }
+    // 圈名（放在圈内空白处，不会被盘缘裁掉）
+    var lc = GEO.ringCenter(r);
+    ctx.font = '600 ' + mm(4.0) + 'px -apple-system, "PingFang SC", sans-serif';
+    ctx.fillStyle = C.label;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(LABEL[r], X(lc), Y(lc));
+  }
+
+  for (var q = 0; q < inRotor.length; q++) {
+    var ip = inRotor[q][0];
+    bead(ctx, X(ip), Y(ip), mm(GEO.BEAD_R), inRotor[q][1], true, mm);
+  }
+}
+
+function bead(ctx, x, y, br, color, isGate, mm) {
+  var c = BEAD[color] || BEAD[0];
+  ctx.beginPath(); ctx.arc(x, y, br, 0, Math.PI * 2);
+  ctx.fillStyle = c.f; ctx.fill();
+  ctx.lineWidth = mm(0.35); ctx.strokeStyle = c.d; ctx.stroke();
+
+  ctx.beginPath();
+  ctx.arc(x - br * 0.30, y - br * 0.33, br * 0.32, 0, Math.PI * 2);
+  ctx.fillStyle = 'rgba(255,255,255,0.62)';
+  ctx.fill();
+
+  if (isGate) {
+    ctx.beginPath(); ctx.arc(x, y, br + mm(1.15), 0, Math.PI * 2);
+    ctx.lineWidth = mm(0.45); ctx.strokeStyle = 'rgba(200,130,20,0.55)';
+    ctx.stroke();
+  }
+}
+
+module.exports = { drawBoard: drawBoard, BEAD: BEAD };
+
+});
+
+window.__define("core.js", function (module, exports, require) {
+/**
+ * 滚珠魔方豆 · 交互控制器（与平台无关）
+ * 小程序页面与网页预览都只是给它接一个画布 + 一个逐帧循环，
+ * 所有"拨动 → 进档 → 落账 → 判定"的逻辑都在这里，两边行为完全一致。
+ *
+ * 依赖注入：{ now, onHud, onWin }
+ */
+
+var G = require('./game.js');
+var GEO = require('./geo.js');
+var SOLVER = require('./solver.js');
+
+var DEG = GEO.DEG;
+
+var LEVELS = [
+  { key: 'easy', label: '简单', steps: 14 },
+  { key: 'normal', label: '普通', steps: 30 },
+  { key: 'hard', label: '困难', steps: 52 }
+];
+
+var CFG = {
+  scrambleMs: 56,       // 打乱时每一步的动画时长（毫秒）
+  ringStepDeg: 30,      // 外圈一格
+  rotorStepDeg: 120,    // 转子一档
+  rotorMinDeg: 44,      // 转子拨够这个角度才算进一档
+  rotorLimitDeg: 130,   // 单次拖动最多拨到的角度
+  ringSnapMs: 140,      // 松手回位动画
+  rotorSnapMs: 190,
+  grabBeadFactor: 1.75, // 手指离珠子多近算"抓住这颗珠"
+  maxHistory: 600
+};
+
+function createEngine(opts) {
+  opts = opts || {};
+  var now = opts.now || function () { return Date.now(); };
+  var onHud = opts.onHud || function () {};
+  var onWin = opts.onWin || function () {};
+
+  var E = {};
+
+  // ────────────── 状态 ──────────────
+  E.LEVELS = LEVELS;
+  E.level = 'normal';
+  E.game = { state: G.createState(), phase: G.createPhase() };
+  E.vis = { ringExtra: [0, 0, 0], rho: 0, grab: null };
+
+  E.anim = null;
+  E.queue = [];
+  E.queueSilent = true;
+  E.queueEnd = null;
+  E.queueDur = CFG.scrambleMs;
+
+  E.history = [];
+  E.moves = 0;
+  E.busy = false;
+  E.playing = false;
+  E.won = false;
+  E.drag = null;
+
+  // 学习模式：开启后由求解器逐步带打
+  E.learn = false;
+  E.plan = null;
+
+  E.elapsed = 0;
+  E.running = false;
+  E._t0 = 0;
+  E._hudKey = '';
+
+  // 视口（由宿主页面注入）
+  E.scale = 1; E.cx = 0; E.cy = 0;
+
+  // ────────────── 内部工具 ──────────────
+  function timeText() {
+    var s = Math.floor(E.elapsed / 1000);
+    return ('0' + Math.floor(s / 60)).slice(-2) + ':' + ('0' + (s % 60)).slice(-2);
+  }
+
+  function pushHud(force) {
+    var done = G.progress(E.game.state);
+    var key = E.moves + '|' + done + '|' + timeText() + '|' + (E.running ? 1 : 0);
+    if (!force && key === E._hudKey) return;
+    E._hudKey = key;
+    onHud({
+      steps: E.moves,
+      done: done,
+      doneCount: done,
+      donePct: Math.round(done / 36 * 100),
+      timeText: timeText(),
+      running: E.running
+    });
+  }
+  E.pushHud = pushHud;
+
+  function makeAnim(dur, apply, done) {
+    return { t0: now(), dur: dur, apply: apply, done: done };
+  }
+
+  function startAnim(move, dur, silent) {
+    if (move.t === 'r') {
+      var r = move.r, d = move.d;
+      var from = E.vis.ringExtra[r];
+      var to = CFG.ringStepDeg * d;
+      E.anim = makeAnim(dur, function (k) {
+        E.vis.ringExtra[r] = from + (to - from) * k;
+      }, function () {
+        E.vis.ringExtra[r] = 0;
+        E.game.phase[r] = G.mod(E.game.phase[r] + d, G.N);
+        commit(move, silent);
+      });
+    } else {
+      var f0 = E.vis.rho;
+      var t0 = CFG.rotorStepDeg * move.d;
+      E.anim = makeAnim(dur, function (k) {
+        E.vis.rho = f0 + (t0 - f0) * k;
+      }, function () {
+        E.vis.rho = 0;
+        G.turnCenter(E.game.state, E.game.phase, move.d);
+        commit(move, silent);
+      });
+    }
+  }
+
+  function commit(move, silent) {
+    if (silent) return;
+    E.history.push(move);
+    if (E.history.length > CFG.maxHistory) E.history.shift();
+    E.moves += 1;
+    pushHud();
+    checkWin();
+  }
+
+  function checkWin() {
+    if (E.won || !E.playing) return;
+    if (!G.isSolved(E.game.state)) return;
+    E.won = true;
+    E.playing = false;
+    E.running = false;
+    pushHud(true);
+    onWin({ steps: E.moves, timeText: timeText() });
+  }
+
+  function pick(x, y) {
+    var vx = (x - E.cx) / E.scale;
+    var vy = (E.cy - y) / E.scale;
+    var d0 = Math.sqrt(vx * vx + vy * vy);
+
+    // ① 落在中心转子毂范围内 → 转子（热区已随轴毂放大，见 geo.CENTER_TOUCH）
+    if (d0 < GEO.CENTER_TOUCH) return { mode: 'center' };
+
+    // ② 手指压在某颗珠上 → 归那颗珠所在的外圈
+    var lim = GEO.BEAD_R * CFG.grabBeadFactor;
+    var bestR = -1, bestD = 1e9;
+    for (var r = 0; r < 3; r++) {
+      var rot = CFG.ringStepDeg * (E.game.phase[r] % G.N) + E.vis.ringExtra[r];
+      for (var i = 0; i < G.N; i++) {
+        var p = GEO.slotPoint(r, i, rot);
+        var dx = vx - p[0], dy = vy - p[1];
+        var dd = Math.sqrt(dx * dx + dy * dy);
+        if (dd < bestD) { bestD = dd; bestR = r; }
+      }
+    }
+    if (bestR >= 0 && bestD < lim) return { mode: 'ring', ring: bestR };
+
+    // ③ 盘心附近（爪指上、珠道内侧的空区）→ 转子
+    if (d0 < GEO.RC * 0.82) return { mode: 'center' };
+
+    // ④ 就近取外圈
+    var bR = 0, bD = 1e9;
+    for (var r2 = 0; r2 < 3; r2++) {
+      var c = GEO.ringCenter(r2);
+      var ex = vx - c[0], ey = vy - c[1];
+      var diff = Math.abs(Math.sqrt(ex * ex + ey * ey) - GEO.RO);
+      if (diff < bD) { bD = diff; bR = r2; }
+    }
+    return { mode: 'ring', ring: bR };
+  }
+
+  // ────────────── 生命周期 / 逐帧 ──────────────
+  E.setViewport = function (scale, cx, cy) {
+    E.scale = scale; E.cx = cx; E.cy = cy;
+  };
+
+  E.view = function () {
+    return {
+      scale: E.scale, cx: E.cx, cy: E.cy,
+      state: E.game.state, phase: E.game.phase,
+      ringExtra: E.vis.ringExtra, rho: E.vis.rho, grab: E.vis.grab
+    };
+  };
+
+  E.tick = function () {
+    var t = now();
+
+    // 队列推进
+    if (!E.anim) {
+      if (E.queue.length) {
+        startAnim(E.queue.shift(), E.queueDur, E.queueSilent);
+      } else if (E.busy) {
+        E.busy = false;
+        var cb = E.queueEnd;
+        E.queueEnd = null;
+        if (cb) cb();
+      }
+    }
+
+    // 当前动画
+    if (E.anim) {
+      var a = E.anim;
+      var e = (t - a.t0) / a.dur;
+      if (e > 1) e = 1;
+      if (e < 0) e = 0;
+      var k = e < 0.5 ? 4 * e * e * e : 1 - Math.pow(-2 * e + 2, 3) / 2;
+      a.apply(k);
+      if (e >= 1) { E.anim = null; a.done(); }
+    }
+
+    // 计时
+    if (E.running) {
+      E.elapsed = t - E._t0;
+      pushHud();
+    }
+  };
+
+  E.pause = function () {
+    if (E.running) { E.elapsed = now() - E._t0; E.running = false; }
+  };
+  E.resume = function () {
+    if (E.playing && !E.won) { E._t0 = now() - E.elapsed; E.running = true; }
+  };
+
+  // ────────────── 触摸 ──────────────
+  E.down = function (x, y) {
+    if (E.busy || E.won || !E.scale) return false;
+    if (E.learn) return false;          // 学习模式锁定盘面，只能点「下一步」
+    var p = pick(x, y);
+    if (!p) return false;
+
+    if (p.mode === 'ring') {
+      var c = GEO.ringCenter(p.ring);
+      var vx = (x - E.cx) / E.scale - c[0];
+      var vy = (E.cy - y) / E.scale - c[1];
+      if (Math.sqrt(vx * vx + vy * vy) < GEO.RO * 0.28) {
+        E.drag = null; E.vis.grab = null; return false;   // 抓在圈心附近，角度太抖，忽略
+      }
+      E.drag = { mode: 'ring', ring: p.ring, last: Math.atan2(vy, vx) };
+    } else {
+      var w = E.rotorLocal(x, y);
+      E.drag = { mode: 'center', last: Math.atan2(w[1], w[0]) };
+    }
+    E.vis.grab = p;
+    return true;
+  };
+
+  E.rotorLocal = function (x, y) {
+    return [(x - E.cx) / E.scale, (E.cy - y) / E.scale];
+  };
+
+  function norm(a) {
+    while (a > 180) a -= 360;
+    while (a < -180) a += 360;
+    return a;
+  }
+
+  E.move = function (x, y) {
+    var d = E.drag;
+    if (!d) return;
+
+    if (d.mode === 'ring') {
+      var c = GEO.ringCenter(d.ring);
+      var vx = (x - E.cx) / E.scale - c[0];
+      var vy = (E.cy - y) / E.scale - c[1];
+      var rad = Math.sqrt(vx * vx + vy * vy);
+      var ang = Math.atan2(vy, vx);
+      if (rad < GEO.RO * 0.34) { d.last = ang; return; }
+      var delta = norm((ang - d.last) / DEG);
+      d.last = ang;
+      if (delta > 36) delta = 36;
+      if (delta < -36) delta = -36;
+
+      var r = d.ring;
+      E.vis.ringExtra[r] += delta;
+
+      // 每满 30° 立刻进一档（跟手，不等松手）
+      var guard = 0;
+      while (Math.abs(E.vis.ringExtra[r]) >= CFG.ringStepDeg && guard++ < 12) {
+        var sgn = E.vis.ringExtra[r] > 0 ? 1 : -1;
+        E.game.phase[r] = G.mod(E.game.phase[r] + sgn, G.N);
+        E.vis.ringExtra[r] -= CFG.ringStepDeg * sgn;
+        E.history.push({ t: 'r', r: r, d: sgn });
+        E.moves += 1;
+        pushHud();
+        checkWin();
+      }
+    } else {
+      var w = E.rotorLocal(x, y);
+      var a2 = Math.atan2(w[1], w[0]);
+      var dl = norm((a2 - d.last) / DEG);
+      d.last = a2;
+      if (dl > 40) dl = 40;
+      if (dl < -40) dl = -40;
+      var nv = E.vis.rho + dl;
+      if (nv > CFG.rotorLimitDeg) nv = CFG.rotorLimitDeg;
+      if (nv < -CFG.rotorLimitDeg) nv = -CFG.rotorLimitDeg;
+      E.vis.rho = nv;
+    }
+  };
+
+  E.up = function () {
+    var d = E.drag;
+    E.drag = null;
+    E.vis.grab = null;
+    if (!d) return;
+
+    if (d.mode === 'ring') {
+      var r = d.ring;
+      var ex = E.vis.ringExtra[r];
+      var kk = Math.round(ex / CFG.ringStepDeg);
+      if (kk !== 0) {
+        E.game.phase[r] = G.mod(E.game.phase[r] + kk, G.N);
+        E.vis.ringExtra[r] = ex - CFG.ringStepDeg * kk;
+        E.history.push({ t: 'r', r: r, d: kk });
+        E.moves += 1;
+        pushHud();
+        checkWin();
+      }
+      var from = E.vis.ringExtra[r];
+      if (Math.abs(from) > 0.3) {
+        E.anim = makeAnim(CFG.ringSnapMs, function (k) {
+          E.vis.ringExtra[r] = from * (1 - k);
+        }, function () { E.vis.ringExtra[r] = 0; });
+      } else {
+        E.vis.ringExtra[r] = 0;
+      }
+    } else {
+      var rho = E.vis.rho;
+      if (Math.abs(rho) < CFG.rotorMinDeg) {
+        E.anim = makeAnim(CFG.rotorSnapMs, function (k) {
+          E.vis.rho = rho * (1 - k);
+        }, function () { E.vis.rho = 0; });
+      } else {
+        E.busy = true;
+        startAnim({ t: 'c', d: rho > 0 ? 1 : -1 }, CFG.rotorSnapMs, false);
+      }
+    }
+  };
+
+  // ────────────── 操作 ──────────────
+  E.setLevel = function (key) {
+    for (var i = 0; i < LEVELS.length; i++) if (LEVELS[i].key === key) E.level = key;
+  };
+
+  E.shuffle = function () {
+    if (E.busy) return;
+    var lv = LEVELS[1];
+    for (var i = 0; i < LEVELS.length; i++) if (LEVELS[i].key === E.level) lv = LEVELS[i];
+
+    E.anim = null;
+    E.game = { state: G.createState(), phase: G.createPhase() };
+    E.vis.ringExtra = [0, 0, 0];
+    E.vis.rho = 0;
+    E.vis.grab = null;
+    E.drag = null;
+    E.history = [];
+    E.moves = 0;
+    E.won = false;
+    E.playing = false;
+    E.running = false;
+    E.elapsed = 0;
+    E.plan = null;
+
+    var mv = G.makeScramble(lv.steps);
+    E.lastScramble = mv.slice();       // 留档：便于调试 / 日后做"提示"与自动复原
+    E.queue = mv.slice();
+    E.queueSilent = true;
+    E.queueDur = CFG.scrambleMs;
+    E.busy = true;
+    E.queueEnd = function () {
+      E.playing = true;
+      E.moves = 0;
+      E.history = [];
+      E.elapsed = 0;
+      E._t0 = now();
+      E.running = true;
+      pushHud(true);
+    };
+    pushHud(true);
+  };
+
+  E.undo = function () {
+    if (E.busy || E.won || !E.history.length) return;
+    var mv = E.history.pop();
+    E.queue = [G.invert(mv)];
+    E.queueSilent = true;
+    E.queueDur = 170;
+    E.busy = true;
+    E.queueEnd = function () {
+      E.moves = Math.max(0, E.moves - 1);
+      pushHud(true);
+    };
+  };
+
+  // ────────────── 学习模式 ──────────────
+  E.setLearn = function (on) {
+    E.learn = !!on;
+    E.plan = null;
+    // 进入学习模式时预热求解器（JIT），避免第一次点击卡顿
+    if (E.learn && !E._warmed) {
+      E._warmed = true;
+      setTimeout(function () { try { SOLVER.warmup(); } catch (e) {} }, 30);
+    }
+  };
+
+  E.learnState = function () {
+    var left = null;
+    if (E.plan) {
+      left = 0;
+      for (var b = 0; b < E.plan.length; b++) left += E.plan[b].length;
+    }
+    return { on: E.learn, left: left };
+  };
+
+  /**
+   * 走一步：执行求解计划的一个"块"（拨好三个圈 + 中心换珠 = 一次完整动作）。
+   * 若期间玩家手动动过导致剩余计划失效，会自动重新求解。
+   * @returns {boolean} 是否真的走了一步
+   */
+  E.learnNext = function () {
+    if (!E.learn || E.busy || E.won) return false;
+    if (G.isSolved(E.game.state)) { E.plan = []; return false; }
+
+    // 剩余计划还有效吗？（在副本上重放校验，代价极小）
+    if (E.plan && E.plan.length) {
+      var flat = [];
+      for (var b = 0; b < E.plan.length; b++) flat = flat.concat(E.plan[b]);
+      var st = E.game.state.map(function (row) { return row.slice(); });
+      var ph = E.game.phase.slice();
+      G.applyMoves(st, ph, flat);
+      if (!G.isSolved(st)) E.plan = null;
+    }
+
+    if (!E.plan || !E.plan.length) {
+      var blocks = SOLVER.solveBlocks(E.game.state, E.game.phase, { history: E.history });
+      if (!blocks || !blocks.length) return false;
+      E.plan = blocks;
+    }
+
+    var blk = E.plan.shift();
+    var dur = 240;
+    for (var i = 0; i < blk.length; i++) if (blk[i].t === 'c') dur = 420;
+    E.queue = blk.slice();
+    E.queueSilent = false;              // 计步、进历史（撤销可回退演示步）
+    E.queueDur = dur;
+    E.busy = true;
+    E.queueEnd = function () { pushHud(true); };
+    return true;
+  };
+
+  E.reset = function () {
+    if (E.busy) return;
+    E.anim = null;
+    E.queue = [];
+    E.queueEnd = null;
+    E.busy = false;
+    E.drag = null;
+    E.vis.grab = null;
+    E.game = { state: G.createState(), phase: G.createPhase() };
+    E.vis.ringExtra = [0, 0, 0];
+    E.vis.rho = 0;
+    E.history = [];
+    E.moves = 0;
+    E.won = false;
+    E.playing = false;
+    E.running = false;
+    E.elapsed = 0;
+    E.plan = null;
+    pushHud(true);
+  };
+
+  pushHud(true);
+  return E;
+}
+
+module.exports = { createEngine: createEngine, LEVELS: LEVELS, CFG: CFG };
+
+});
+</script>
+<script>
+var core = require('core.js'), GEO = require('geo.js'), DRAW = require('draw.js');
+
+var els = {
+  canvas: document.getElementById('board'),
+  steps: document.getElementById('steps'),
+  time: document.getElementById('time'),
+  done: document.getElementById('done'),
+  bar: document.getElementById('bar'),
+  tip: document.getElementById('tip'),
+  levels: document.getElementById('levels'),
+  mask: document.getElementById('mask'),
+  winSub: document.getElementById('winSub'),
+  shuffle: document.getElementById('shuffle'),
+  undo: document.getElementById('undo'),
+  reset: document.getElementById('reset'),
+  learn: document.getElementById('learn'),
+  next: document.getElementById('next'),
+  winBtn: document.getElementById('winBtn'),
+  winLink: document.getElementById('winLink')
+};
+
+var W = 0, H = 0;
+var engine = core.createEngine({
+  onHud: function (h) {
+    els.steps.textContent = h.steps;
+    els.time.textContent = h.timeText;
+    els.done.innerHTML = h.doneCount + '<small>/36</small>';
+    els.bar.style.width = h.donePct + '%';
+  },
+  onWin: function (h) {
+    els.winSub.textContent = '用时 ' + h.timeText + '　·　' + h.steps + ' 步';
+    els.mask.classList.add('show');
+    if (navigator.vibrate) navigator.vibrate(40);
+  }
+});
+window.__engine = engine;   // 供自动化测试/调试
+
+// 难度
+core.LEVELS.forEach(function (lv) {
+  var b = document.createElement('div');
+  b.className = 'chip' + (lv.key === 'normal' ? ' on' : '');
+  b.textContent = lv.label;
+  b.dataset.key = lv.key;
+  b.onclick = function () {
+    if (lv.key === engine.level) return;
+    engine.setLevel(lv.key);
+    [].forEach.call(els.levels.children, function (n) { n.classList.toggle('on', n.dataset.key === lv.key); });
+  };
+  els.levels.appendChild(b);
+});
+
+function resize() {
+  var wrap = els.canvas.parentNode;
+  var size = Math.floor(Math.min(wrap.clientWidth, wrap.clientHeight));
+  if (size < 120) size = 120;
+  if (size === W) return;
+  W = H = size;
+  var dpr = window.devicePixelRatio || 1;
+  els.canvas.width = Math.round(size * dpr);
+  els.canvas.height = Math.round(size * dpr);
+  els.canvas.style.width = size + 'px';
+  els.canvas.style.height = size + 'px';
+  var ctx = els.canvas.getContext('2d');
+  ctx.setTransform(1, 0, 0, 1, 0, 0);
+  ctx.scale(dpr, dpr);
+  window.__ctx = ctx;
+  var pad = size * 0.035;
+  engine.setViewport((size / 2 - pad) / GEO.DISC_R, size / 2, size / 2);
+}
+
+function frame() {
+  engine.tick();
+  DRAW.drawBoard(window.__ctx, W, H, engine.view());
+  requestAnimationFrame(frame);
+}
+resize();
+window.addEventListener('resize', resize);
+requestAnimationFrame(frame);
+
+// ── 指针事件（鼠标 / 触屏通用）──
+function local(e) {
+  var r = els.canvas.getBoundingClientRect();
+  return [e.clientX - r.left, e.clientY - r.top];
+}
+var active = false;
+
+els.canvas.addEventListener('pointerdown', function (e) {
+  var p = local(e);
+  active = engine.down(p[0], p[1]);
+  if (active) {
+    try { els.canvas.setPointerCapture(e.pointerId); } catch (err) {}
+    els.canvas.classList.add('dragging');
+  }
+  e.preventDefault();
+});
+els.canvas.addEventListener('pointermove', function (e) {
+  if (!active) return;
+  var p = local(e);
+  engine.move(p[0], p[1]);
+  e.preventDefault();
+});
+function end(e) {
+  if (!active) return;
+  active = false;
+  engine.up();
+  els.canvas.classList.remove('dragging');
+}
+els.canvas.addEventListener('pointerup', end);
+els.canvas.addEventListener('pointercancel', end);
+els.canvas.addEventListener('contextmenu', function (e) { e.preventDefault(); });
+
+// ── 按钮 ──
+function doShuffle() { els.mask.classList.remove('show'); engine.shuffle(); syncLearn(); }
+els.shuffle.onclick = doShuffle;
+els.winBtn.onclick = doShuffle;
+els.undo.onclick = function () { engine.undo(); setTimeout(syncLearn, 240); };
+els.reset.onclick = function () { els.mask.classList.remove('show'); engine.reset(); syncLearn(); };
+els.winLink.onclick = function () { els.mask.classList.remove('show'); engine.reset(); syncLearn(); };
+
+// ── 学习模式 ──
+function syncLearn() {
+  var ls = engine.learnState();
+  els.learn.classList.toggle('on', ls.on);
+  els.learn.textContent = ls.on ? '学习模式 · 已开启' : '学习模式';
+  els.tip.textContent = ls.on
+    ? '盘面已锁定，点击「下一步」逐步演示；关闭学习模式后恢复手动拨动'
+    : '按住任意外圈，沿圆周方向拨动；捏住中心转子左右拨动换珠';
+  var done = ls.on && ls.left === 0;
+  els.next.style.display = ls.on ? '' : 'none';
+  els.next.classList.toggle('done', done);
+  els.next.textContent = done ? '已完成 ✓'
+    : (ls.left === null || ls.left === undefined ? '下一步' : '下一步（剩 ' + ls.left + ' 步）');
+}
+els.learn.onclick = function () { engine.setLearn(!engine.learnState().on); syncLearn(); };
+els.next.onclick = function () {
+  if (!engine.learnNext()) { syncLearn(); return; }
+  syncLearn();
+  var wait = setInterval(function () {
+    if (!engine.busy) { clearInterval(wait); syncLearn(); }
+  }, 60);
+};
+document.addEventListener('visibilitychange', function () {
+  if (document.hidden) engine.pause(); else engine.resume();
+});
+syncLearn();
+</script>
+</body>
+</html>

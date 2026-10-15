@@ -1,0 +1,254 @@
+.page {
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 24rpx 28rpx 40rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: linear-gradient(180deg, #FCFAF5 0%, #F1ECE1 100%);
+  font-family: -apple-system, "PingFang SC", "Helvetica Neue", sans-serif;
+  color: #3D3A34;
+}
+
+/* ── 计分板 ─────────────────────────── */
+.hud {
+  width: 100%;
+  display: flex;
+  background: #FFFFFF;
+  border-radius: 24rpx;
+  padding: 20rpx 0;
+  box-shadow: 0 4rpx 16rpx rgba(120, 110, 90, 0.07);
+  position: relative;
+}
+
+.hud-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.hud-item + .hud-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 12rpx;
+  bottom: 12rpx;
+  width: 1rpx;
+  background: #EFEBE2;
+}
+
+.hud-num {
+  font-size: 40rpx;
+  font-weight: 600;
+  letter-spacing: 1rpx;
+  color: #2F2C27;
+  font-variant-numeric: tabular-nums;
+}
+
+.hud-small {
+  font-size: 24rpx;
+  color: #A9A294;
+  font-weight: 500;
+}
+
+.hud-label {
+  margin-top: 4rpx;
+  font-size: 22rpx;
+  color: #A9A294;
+}
+
+/* ── 进度条 ─────────────────────────── */
+.bar {
+  width: 100%;
+  height: 8rpx;
+  margin: 18rpx 0 6rpx;
+  border-radius: 8rpx;
+  background: #E9E3D8;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 8rpx;
+  background: linear-gradient(90deg, #F0B429 0%, #34A06A 100%);
+  transition: width 0.22s ease-out;
+}
+
+/* ── 盘面 ───────────────────────────── */
+.board-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  margin-top: 6rpx;
+  position: relative;
+}
+
+.board {
+  width: 660rpx;
+  height: 660rpx;
+  display: block;
+}
+
+/* ── 提示 ───────────────────────────── */
+.tip {
+  margin-top: 4rpx;
+  font-size: 23rpx;
+  line-height: 34rpx;
+  color: #A29B8D;
+  text-align: center;
+  padding: 0 20rpx;
+}
+
+/* ── 难度 ───────────────────────────── */
+.levels {
+  display: flex;
+  gap: 16rpx;
+  margin-top: 20rpx;
+}
+
+.chip {
+  padding: 10rpx 34rpx;
+  border-radius: 999rpx;
+  font-size: 25rpx;
+  color: #8C8578;
+  background: #FFFFFF;
+  border: 1rpx solid #E7E1D6;
+}
+
+.chip-on {
+  color: #FFFFFF;
+  background: #3D6FD6;
+  border-color: #3D6FD6;
+  font-weight: 500;
+}
+
+/* ── 操作按钮 ───────────────────────── */
+.actions {
+  width: 100%;
+  display: flex;
+  gap: 20rpx;
+  margin-top: 22rpx;
+}
+
+.btn {
+  flex: 1;
+  height: 92rpx;
+  line-height: 92rpx;
+  text-align: center;
+  border-radius: 20rpx;
+  font-size: 29rpx;
+  color: #4A4640;
+  background: #FFFFFF;
+  box-shadow: 0 4rpx 14rpx rgba(120, 110, 90, 0.08);
+}
+
+.btn:active { opacity: 0.75; }
+
+.btn-primary {
+  flex: 1.5;
+  color: #FFFFFF;
+  font-weight: 500;
+  background: linear-gradient(135deg, #4A82E8 0%, #3563C8 100%);
+  box-shadow: 0 6rpx 18rpx rgba(60, 105, 200, 0.28);
+}
+
+/* ── 学习模式 ───────────────────────── */
+.learn-row { margin-top: 16rpx; }
+
+.learn-btn.learn-on {
+  color: #FFFFFF;
+  font-weight: 500;
+  background: linear-gradient(135deg, #3FB98A 0%, #2E9B69 100%);
+  box-shadow: 0 6rpx 16rpx rgba(46, 155, 105, 0.26);
+}
+
+.btn-next {
+  flex: 1.5;
+  color: #FFFFFF;
+  font-weight: 500;
+  background: linear-gradient(135deg, #4A82E8 0%, #3563C8 100%);
+  box-shadow: 0 6rpx 18rpx rgba(60, 105, 200, 0.28);
+}
+
+.btn-next-done {
+  background: linear-gradient(135deg, #8FB8EF 0%, #6C9BE0 100%);
+  box-shadow: none;
+}
+
+.foot {
+  margin-top: auto;
+  padding-top: 26rpx;
+  font-size: 21rpx;
+  color: #B6AFA1;
+  letter-spacing: 1rpx;
+}
+
+/* ── 胜利提示：直接覆盖在计分块上，高度与之一致 ── */
+.win-pop {
+  position: absolute;
+  left: 0; right: 0; top: 0; bottom: 0;
+  border-radius: 24rpx;
+  background: #FFFFFF;
+  display: flex;
+  align-items: center;
+  padding: 0 28rpx;
+  gap: 18rpx;
+  box-shadow: 0 4rpx 16rpx rgba(120, 110, 90, 0.07);
+  z-index: 20;
+  opacity: 0;
+  transition: opacity 0.22s ease-out;
+  pointer-events: none;
+}
+
+.win-pop-show {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.win-badge {
+  flex: none;
+  width: 60rpx;
+  height: 60rpx;
+  line-height: 60rpx;
+  text-align: center;
+  border-radius: 50%;
+  font-size: 30rpx;
+  color: #FFFFFF;
+  background: linear-gradient(135deg, #4CC48A 0%, #2E9B69 100%);
+}
+
+.win-title {
+  flex: none;
+  font-size: 32rpx;
+  font-weight: 600;
+  color: #2F2C27;
+}
+
+.win-sub {
+  flex: none;
+  font-size: 22rpx;
+  color: #9C9587;
+  white-space: nowrap;
+}
+
+.win-btn {
+  flex: none;
+  margin-left: auto;
+  width: 164rpx;
+  height: 64rpx;
+  line-height: 64rpx;
+  text-align: center;
+  border-radius: 16rpx;
+  font-size: 24rpx;
+  color: #FFFFFF;
+  background: linear-gradient(135deg, #4A82E8 0%, #3563C8 100%);
+}
+
+.win-link {
+  flex: none;
+  font-size: 22rpx;
+  color: #A9A294;
+  padding: 8rpx 4rpx;
+}

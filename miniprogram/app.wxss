@@ -1,0 +1,7 @@
+page {
+  background: #F1ECE1;
+}
+
+view, text {
+  box-sizing: border-box;
+}

@@ -1,0 +1,97 @@
+<svg width="100%" viewBox="0 0 680 520" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>滚珠魔方豆 v3 盘面形状：3 外圈 × 12 珠 + 三爪六窝转子</title>
+<desc>三个外圈珠道各与中心转子轨迹相交两点，全盘共六个闸口；每圈 12 个珠位，两闸口相隔 2 个珠距、中间夹 1 颗珠。</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<circle cx="340.0" cy="250.0" r="170.0" fill="#F1EFE8" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="340.0" cy="143.8" r="63.8" fill="none" stroke="#D3D1C7" stroke-width="28"/>
+<circle cx="340.0" cy="143.8" r="63.8" fill="#FFFFFF" fill-opacity="0.55" stroke="#888780" stroke-width="0.5"/>
+<circle cx="248.0" cy="303.1" r="63.8" fill="none" stroke="#D3D1C7" stroke-width="28"/>
+<circle cx="248.0" cy="303.1" r="63.8" fill="#FFFFFF" fill-opacity="0.55" stroke="#888780" stroke-width="0.5"/>
+<circle cx="432.0" cy="303.1" r="63.8" fill="none" stroke="#D3D1C7" stroke-width="28"/>
+<circle cx="432.0" cy="303.1" r="63.8" fill="#FFFFFF" fill-opacity="0.55" stroke="#888780" stroke-width="0.5"/>
+<circle cx="340.0" cy="250.0" r="60.2" fill="none" stroke="#BA7517" stroke-width="3" stroke-dasharray="3 6"/>
+<path d="M 340.0 250.0 L 371.9 199.0" fill="none" stroke="#85B7EB" stroke-width="6" stroke-linecap="round"/>
+<path d="M 340.0 250.0 L 308.1 199.0" fill="none" stroke="#85B7EB" stroke-width="6" stroke-linecap="round"/>
+<path d="M 340.0 250.0 L 279.9 247.9" fill="none" stroke="#85B7EB" stroke-width="6" stroke-linecap="round"/>
+<path d="M 340.0 250.0 L 311.7 303.1" fill="none" stroke="#85B7EB" stroke-width="6" stroke-linecap="round"/>
+<path d="M 340.0 250.0 L 368.3 303.1" fill="none" stroke="#85B7EB" stroke-width="6" stroke-linecap="round"/>
+<path d="M 340.0 250.0 L 400.1 247.9" fill="none" stroke="#85B7EB" stroke-width="6" stroke-linecap="round"/>
+<circle cx="340.0" cy="250.0" r="26.6" fill="#B5D4F4" stroke="#378ADD" stroke-width="0.5"/>
+<circle cx="340.0" cy="80.0" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="308.1" cy="88.5" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="284.8" cy="111.9" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="276.2" cy="143.8" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="284.8" cy="175.6" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="308.1" cy="199.0" r="15.3" fill="#FAC775" stroke="#633806" stroke-width="1.2"/>
+<circle cx="308.1" cy="199.0" r="13.3" fill="#EF9F27"/>
+<circle cx="340.0" cy="207.5" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="340.0" cy="207.5" r="17.8" fill="none" stroke="#378ADD" stroke-width="1.2" stroke-dasharray="3 3"/>
+<circle cx="371.9" cy="199.0" r="15.3" fill="#FAC775" stroke="#633806" stroke-width="1.2"/>
+<circle cx="371.9" cy="199.0" r="13.3" fill="#EF9F27"/>
+<circle cx="395.2" cy="175.6" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="403.8" cy="143.8" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="395.2" cy="111.9" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="371.9" cy="88.5" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="192.8" cy="335.0" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="216.1" cy="358.3" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="248.0" cy="366.9" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="279.9" cy="358.3" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="303.2" cy="335.0" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="311.7" cy="303.1" r="15.3" fill="#FAC775" stroke="#633806" stroke-width="1.2"/>
+<circle cx="311.7" cy="303.1" r="13.3" fill="#EF9F27"/>
+<circle cx="303.2" cy="271.2" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="303.2" cy="271.2" r="17.8" fill="none" stroke="#378ADD" stroke-width="1.2" stroke-dasharray="3 3"/>
+<circle cx="279.9" cy="247.9" r="15.3" fill="#FAC775" stroke="#633806" stroke-width="1.2"/>
+<circle cx="279.9" cy="247.9" r="13.3" fill="#EF9F27"/>
+<circle cx="248.0" cy="239.4" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="216.1" cy="247.9" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="192.8" cy="271.2" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="184.2" cy="303.1" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="487.2" cy="335.0" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="495.8" cy="303.1" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="487.2" cy="271.3" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="463.9" cy="247.9" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="432.0" cy="239.4" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="400.1" cy="247.9" r="15.3" fill="#FAC775" stroke="#633806" stroke-width="1.2"/>
+<circle cx="400.1" cy="247.9" r="13.3" fill="#EF9F27"/>
+<circle cx="376.8" cy="271.3" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="376.8" cy="271.3" r="17.8" fill="none" stroke="#378ADD" stroke-width="1.2" stroke-dasharray="3 3"/>
+<circle cx="368.3" cy="303.1" r="15.3" fill="#FAC775" stroke="#633806" stroke-width="1.2"/>
+<circle cx="368.3" cy="303.1" r="13.3" fill="#EF9F27"/>
+<circle cx="376.8" cy="335.0" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="400.1" cy="358.3" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="432.0" cy="366.9" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="463.9" cy="358.3" r="13.3" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="371.9" cy="199.0" r="18.8" fill="none" stroke="#633806" stroke-width="1.2"/>
+<circle cx="308.1" cy="199.0" r="18.8" fill="none" stroke="#633806" stroke-width="1.2"/>
+<circle cx="279.9" cy="247.9" r="18.8" fill="none" stroke="#633806" stroke-width="1.2"/>
+<circle cx="311.7" cy="303.1" r="18.8" fill="none" stroke="#633806" stroke-width="1.2"/>
+<circle cx="368.3" cy="303.1" r="18.8" fill="none" stroke="#633806" stroke-width="1.2"/>
+<circle cx="400.1" cy="247.9" r="18.8" fill="none" stroke="#633806" stroke-width="1.2"/>
+<path d="M 340.0 250.0 L 340.0 84.0" fill="none" stroke="#888780" stroke-width="0.5" stroke-dasharray="3 3"/>
+<path d="M 333.0 143.8 L 347.0 143.8" stroke="#888780" stroke-width="0.5"/>
+<text class="ts" x="332.0" y="172.0" fill="#444441" text-anchor="end" dominant-baseline="central">R=30</text>
+<text class="ts" x="332.0" y="118.0" fill="#444441" text-anchor="end" dominant-baseline="central">rₒ=18</text>
+<path d="M 340.0 250.0 L 392.1 219.9" fill="none" stroke="#BA7517" stroke-width="0.5" stroke-dasharray="3 3"/>
+<text class="ts" x="400.1" y="218.9" fill="#633806" text-anchor="start" dominant-baseline="central">r_c = 17.0</text>
+<text class="ts" x="340.0" y="58.0" fill="#444441" text-anchor="middle" dominant-baseline="central">上圈 O</text>
+<path d="M 204.0 321.1 L 182.0 392.0" fill="none" stroke="#888780" stroke-width="0.5" stroke-dasharray="3 3"/>
+<text class="ts" x="174.0" y="394.0" fill="#444441" text-anchor="end" dominant-baseline="central">左下圈 G</text>
+<path d="M 476.0 321.1 L 498.0 392.0" fill="none" stroke="#888780" stroke-width="0.5" stroke-dasharray="3 3"/>
+<text class="ts" x="506.0" y="394.0" fill="#444441" text-anchor="start" dominant-baseline="central">右下圈 R</text>
+<circle cx="52.0" cy="92.0" r="6.0" fill="#EF9F27" stroke="#633806" stroke-width="0.5"/>
+<text class="ts" x="64.0" y="92.0" fill="#633806" text-anchor="start" dominant-baseline="central">闸口 = 两圆交点</text>
+<text class="ts" x="64.0" y="110.0" fill="#5F5E5A" text-anchor="start" dominant-baseline="central">每圈 2 个 · 全盘 6 个</text>
+<circle cx="470.0" cy="92.0" r="6.0" fill="#B5D4F4" stroke="#378ADD" stroke-width="1.2"/>
+<text class="ts" x="482.0" y="92.0" fill="#0C447C" text-anchor="start" dominant-baseline="central">中间珠（半径 12）</text>
+<text class="ts" x="482.0" y="110.0" fill="#5F5E5A" text-anchor="start" dominant-baseline="central">每圈 1 颗 · 爪指让开 12.7</text>
+<circle cx="58.0" cy="452.0" r="6.0" fill="#EF9F27" stroke="#633806" stroke-width="0.5"/>
+<text class="ts" x="70.0" y="452.0" fill="#444441" text-anchor="start" dominant-baseline="central">闸口珠 2 颗/圈（可换乘）</text>
+<circle cx="300.0" cy="452.0" r="6.0" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<text class="ts" x="312.0" y="452.0" fill="#444441" text-anchor="start" dominant-baseline="central">私有珠 10 颗/圈（只随本圈转）</text>
+<path d="M 58 478.0 L 74 478.0" stroke="#85B7EB" stroke-width="6" stroke-linecap="round"/>
+<text class="ts" x="86.0" y="478.0" fill="#444441" text-anchor="start" dominant-baseline="central">三爪转子（6 根爪指 = 6 个珠窝）</text>
+<circle cx="330" cy="478.0" r="6" fill="none" stroke="#378ADD" stroke-width="1.2" stroke-dasharray="3 3"/>
+<text class="ts" x="342.0" y="478.0" fill="#444441" text-anchor="start" dominant-baseline="central">中间珠（爪指让开）</text>
+<text class="ts" x="58.0" y="500.0" fill="#5F5E5A" text-anchor="start" dominant-baseline="central">规格（mm）：盘半径 48 · R = 30 · rₒ = 18 · r_c = 17 · 珠径 7.5 · 每圈 12 珠 · 全盘 36 珠</text>
+</svg>

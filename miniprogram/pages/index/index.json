@@ -1,0 +1,8 @@
+{
+  "navigationBarTitleText": "滚珠魔方豆",
+  "navigationBarBackgroundColor": "#FCFAF5",
+  "navigationBarTextStyle": "black",
+  "backgroundColor": "#F1ECE1",
+  "disableScroll": true,
+  "usingComponents": {}
+}

@@ -1,0 +1,84 @@
+<svg width="100%" viewBox="0 0 680 336" role="img" xmlns="http://www.w3.org/2000/svg">
+<title>珠子分布：单圈 12 珠（2 闸口 + 1 中间 + 9 私有）与内圈转一档的 6 颗换乘</title>
+<desc>左图为一个外圈的 12 个珠位，两闸口相隔 2 个珠距、中间夹 1 颗珠；右图为内圈转一档时三圈各 2 颗珠同时换圈。</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>
+<path d="M 340 62 L 340 268" fill="none" stroke="#B4B2A9" stroke-width="0.5" stroke-dasharray="4 4"/>
+<text class="th" x="170.0" y="46.0" fill="#444441" text-anchor="middle" dominant-baseline="central">① 单圈 12 珠 = 2 闸口 + 1 中间 + 9 私有</text>
+<circle cx="170" cy="160" r="84" fill="#FFFFFF" fill-opacity="0.6" stroke="#888780" stroke-width="0.5"/>
+<circle cx="170" cy="160" r="84" fill="none" stroke="#D3D1C7" stroke-width="24"/>
+<circle cx="170.0" cy="76.0" r="11.0" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="128.0" cy="87.3" r="11.0" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="97.3" cy="118.0" r="11.0" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="86.0" cy="160.0" r="11.0" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="97.3" cy="202.0" r="11.0" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="128.0" cy="232.7" r="11.0" fill="#EF9F27" stroke="#633806" stroke-width="1.2"/>
+<circle cx="170.0" cy="244.0" r="11.0" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="170" cy="244" r="14.5" fill="none" stroke="#378ADD" stroke-width="1.2" stroke-dasharray="3 3"/>
+<circle cx="212.0" cy="232.7" r="11.0" fill="#EF9F27" stroke="#633806" stroke-width="1.2"/>
+<circle cx="242.7" cy="202.0" r="11.0" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="254.0" cy="160.0" r="11.0" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="242.7" cy="118.0" r="11.0" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="212.0" cy="87.3" r="11.0" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<path d="M 128.0 232.7 Q 170.0 272.7 212.0 232.7" fill="none" stroke="#633806" stroke-width="0.5" marker-start="url(#arrow)" marker-end="url(#arrow)"/>
+<text class="ts" x="170.0" y="294.0" fill="#633806" text-anchor="middle" dominant-baseline="central">2γ = 60° = 2 个珠距</text>
+<text class="ts" x="170.0" y="310.0" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central">两闸口之间夹 1 颗珠</text>
+<text class="th" x="510.0" y="46.0" fill="#444441" text-anchor="middle" dominant-baseline="central">② 内圈转 1 档（120°）：6 颗珠同时换圈</text>
+<circle cx="510" cy="88" r="36" fill="#FFFFFF" fill-opacity="0.6" stroke="#888780" stroke-width="0.5"/>
+<circle cx="510" cy="88" r="36" fill="none" stroke="#D3D1C7" stroke-width="8"/>
+<circle cx="510.0" cy="52.0" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="492.0" cy="56.8" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="478.8" cy="70.0" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="474.0" cy="88.0" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="478.8" cy="106.0" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="492.0" cy="119.2" r="4.6" fill="#EF9F27" stroke="#633806" stroke-width="1.0"/>
+<circle cx="510.0" cy="124.0" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="528.0" cy="119.2" r="4.6" fill="#EF9F27" stroke="#633806" stroke-width="1.0"/>
+<circle cx="541.2" cy="106.0" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="546.0" cy="88.0" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="541.2" cy="70.0" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="528.0" cy="56.8" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<text class="ts" x="510.0" y="88.0" fill="#444441" text-anchor="middle" dominant-baseline="central">上圈 O</text>
+<circle cx="456" cy="181" r="36" fill="#FFFFFF" fill-opacity="0.6" stroke="#888780" stroke-width="0.5"/>
+<circle cx="456" cy="181" r="36" fill="none" stroke="#D3D1C7" stroke-width="8"/>
+<circle cx="456.3" cy="145.0" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="438.3" cy="149.8" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="425.1" cy="163.0" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="420.3" cy="181.0" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="425.1" cy="199.0" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="438.3" cy="212.2" r="4.6" fill="#EF9F27" stroke="#633806" stroke-width="1.0"/>
+<circle cx="456.3" cy="217.0" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="474.3" cy="212.2" r="4.6" fill="#EF9F27" stroke="#633806" stroke-width="1.0"/>
+<circle cx="487.5" cy="199.0" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="492.3" cy="181.0" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="487.5" cy="163.0" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="474.3" cy="149.8" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<text class="ts" x="456.3" y="181.0" fill="#444441" text-anchor="middle" dominant-baseline="central">左下 G</text>
+<circle cx="564" cy="181" r="36" fill="#FFFFFF" fill-opacity="0.6" stroke="#888780" stroke-width="0.5"/>
+<circle cx="564" cy="181" r="36" fill="none" stroke="#D3D1C7" stroke-width="8"/>
+<circle cx="563.7" cy="145.0" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="545.7" cy="149.8" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="532.5" cy="163.0" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="527.7" cy="181.0" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="532.5" cy="199.0" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="545.7" cy="212.2" r="4.6" fill="#EF9F27" stroke="#633806" stroke-width="1.0"/>
+<circle cx="563.7" cy="217.0" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="581.7" cy="212.2" r="4.6" fill="#EF9F27" stroke="#633806" stroke-width="1.0"/>
+<circle cx="594.9" cy="199.0" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="599.7" cy="181.0" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="594.9" cy="163.0" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<circle cx="581.7" cy="149.8" r="4.6" fill="#D3D1C7" stroke="#5F5E5A" stroke-width="0.5"/>
+<text class="ts" x="563.7" y="181.0" fill="#444441" text-anchor="middle" dominant-baseline="central">右下 R</text>
+<circle cx="510" cy="150" r="34" fill="none" stroke="#BA7517" stroke-width="2.5" stroke-dasharray="3 5"/>
+<path d="M 510 150 L 528 121" fill="none" stroke="#85B7EB" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M 510 150 L 492 121" fill="none" stroke="#85B7EB" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M 510 150 L 476 149" fill="none" stroke="#85B7EB" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M 510 150 L 494 180" fill="none" stroke="#85B7EB" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M 510 150 L 526 180" fill="none" stroke="#85B7EB" stroke-width="3.5" stroke-linecap="round"/>
+<path d="M 510 150 L 544 149" fill="none" stroke="#85B7EB" stroke-width="3.5" stroke-linecap="round"/>
+<circle cx="510.0" cy="150.0" r="13.0" fill="#B5D4F4" stroke="#378ADD" stroke-width="0.5"/>
+<path d="M 561.4 137.2 Q 560.2 121.0 546.8 111.9" fill="none" stroke="#633806" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 473.2 111.9 Q 459.8 121.0 458.6 137.2" fill="none" stroke="#633806" stroke-width="1.5" marker-end="url(#arrow)"/>
+<path d="M 495.4 200.9 Q 510.0 208.0 524.6 200.9" fill="none" stroke="#633806" stroke-width="1.5" marker-end="url(#arrow)"/>
+<text class="ts" x="510.0" y="246.0" fill="#633806" text-anchor="middle" dominant-baseline="central">转子三爪整组移交：每圈出 2 入 2</text>
+<text class="ts" x="340.0" y="318.0" fill="#5F5E5A" text-anchor="middle" dominant-baseline="central">内圈每转 1 档：三圈各换出 2 颗、换入 2 颗；全盘只有压在 6 个闸口上的 6 颗珠变位。</text>
+</svg>
